@@ -69,6 +69,8 @@ export default class Home extends PureComponent {
     GetHomeData = async () => {
         const data = await GetHomeData();
         //const data = mapto(_data,maps);
+        // alert(data);
+        console.log('data', data)
         if(this.mounted){
             LayoutAnimation.easeInEaseOut();
             this.setState({
@@ -93,6 +95,7 @@ export default class Home extends PureComponent {
 
     render() {
         const {loading,data={}} = this.state;
+        console.log('dataaaaa', data)
         const {navigation,screenProps:{themeColor}} = this.props;
         return (
             <ScrollView style={styles.content}>

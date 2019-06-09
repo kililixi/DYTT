@@ -15,3 +15,4 @@ const codePushOptions = {
 };
 
 AppRegistry.registerComponent(appName, () => CodePush(codePushOptions)(App));
+// AppRegistry.registerComponent(appName, () => App);

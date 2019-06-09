@@ -4,6 +4,7 @@
 
 import React, { PureComponent } from 'react';
 import { DrawerItems } from 'react-navigation';
+import Storage from '../../util/storage';
 import {
 	StyleSheet,
     Text,
@@ -14,6 +15,7 @@ import {
 	View,
 } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
+import Login from './Login';
 import { Store } from '../../util/store';
 
 const contentOptions = {
@@ -32,11 +34,26 @@ const contentOptions = {
 
 export default class DrawerContent extends PureComponent {
 
+    getLoginToken = async () => {
+        const data = await Storage.get('token');
+        console.log('开始测试', data)
+        if(!data) {
+            console.log('未登录，')
+            Storage.save('token','abc');
+        } else {
+            console.log('已登录', data)
+        }
+		
+    }
+    
     componentDidMount() {
         //console.warn(this.props)
+        this.getLoginToken()
     }
 
 	render() {
+        console.log('this.props', this.props);
+        
         const { historyList:[LatestItem] } = this.context;
 		const { themeColor } = this.props.screenProps;
 		return (
