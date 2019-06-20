@@ -20,6 +20,8 @@ import Loading from './Loading';
 class SwiperCon extends React.Component {
     render(){
         const {loading,data,navigation,themeColor} = this.props;
+        console.log('swiperdata', data);
+        
         if(loading){
             return <View style={styles.item} ><Loading size="small" text="" themeColor={themeColor}/></View>
         }

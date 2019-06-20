@@ -24,7 +24,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import AppTop from '../components/AppTop';
 import Loading from '../components/Loading';
 import MovieList from '../components/MovieList';
-import { GetPageList } from '../../util/api';
+import { GetPageList, GetAreacode } from '../../util/api';
 import  { CommonList,Categories } from '../../util/categories';
 const { UIManager } = NativeModules;
 
@@ -37,7 +37,8 @@ class DrawerContent extends PureComponent {
             Status: props.state.Status,
             Area: props.state.Area,
             Year: props.state.Year,
-            isVisible:false
+            isVisible:false,
+            typeList: []
         }
     }
 
@@ -63,14 +64,31 @@ class DrawerContent extends PureComponent {
         setType({ Status, Plot, Area, Year });
     }
 
-    componentDidMount() {
+    getCode = async () => {
+        const areas = await GetAreacode()
+        // console.log('areas', areas);
+        this.setState({
+            typeList: [{
+                cate: "Plot",
+                icon: "compass",
+                name: "分类",
+                type: (areas[0].children !=null) ? areas[0].children : null
+            }]
+        })
+    }
 
+    componentDidMount() {
+        this.getCode()
+        console.log('albumOptions', this.props.albumOptions);
+        
     }
 
     render() {
         const { themeColor, closeDrawer, type } = this.props;
-        const typeList = [...Categories[type], ...CommonList];
-        const { isVisible } = this.state;
+        const typeList2 = [...Categories[type], ...CommonList];
+        // console.log('typeList', typeList)
+        const { isVisible, typeList } = this.state;
+        console.log('2typeList2222', typeList, typeList2)
         return (
             <Fragment>
                 <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.appbar}>
@@ -94,7 +112,7 @@ class DrawerContent extends PureComponent {
                                 <View style={styles.typecon}>
                                     <BorderlessButton disabled={this.state[d.cate].id == ''} onPress={() => this.setType(d.cate, {name:'',id:''})} style={styles.typeitem}><Text style={[styles.typeitemtxt, this.state[d.cate].id == '' && { color: themeColor[0] }]}>全部</Text></BorderlessButton>
                                     {
-                                        d.type.map((el, j) => (
+                                        d.type == null ? undefined :d.type.map((el, j) => (
                                             <BorderlessButton disabled={this.state[d.cate].id === el.id} onPress={() => this.setType(d.cate, el)} key={j} style={styles.typeitem}><Text style={[styles.typeitemtxt, el.id == this.state[d.cate].id && { color: themeColor[0] }]}>{el.name}</Text></BorderlessButton>
                                         ))
                                     }
@@ -140,6 +158,7 @@ export default class extends PureComponent {
         UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
         this.state = {
             data: [],
+            albumOptions: [],
             isRender: false,
             isEnding: false,
             Status: {
@@ -233,10 +252,12 @@ export default class extends PureComponent {
     }
 
     componentDidMount() {
+        console.log('componentDidMount')
         InteractionManager.runAfterInteractions(() => {
             const { type } = this.props.navigation.state.params;
             this.type = type;
             this.getData();
+            // this.getAreacode();
         })
     }
 

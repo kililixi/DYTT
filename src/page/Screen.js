@@ -10,7 +10,7 @@ import {
 import Loading from '../components/Loading';
 import MovieList from '../components/MovieList';
 import MovieMoreBtn from '../components/MovieMoreBtn';
-import { GetPageList } from '../../util/api';
+import { GetPageList, GetPageList2 } from '../../util/api';
 
 const { UIManager } = NativeModules;
 
@@ -26,7 +26,9 @@ export default class extends PureComponent {
     }
 
     getData = async () => {
-        const data = await GetPageList({ pageIndex: 1, pageSize: 30, Type:this.type });
+        // const data = await GetPageList({ pageIndex: 1, pageSize: 30, Type:this.type });
+        const data = await GetPageList2({ page: 1, size: 10, Type:this.type, id: this.id });
+        
         if(this.mounted){
             LayoutAnimation.easeInEaseOut();
             this.setState({
@@ -39,8 +41,9 @@ export default class extends PureComponent {
     componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
             this.mounted = true;
-            const { type } = this.props;
+            const { type, id } = this.props;
             this.type = type;
+            this.id = id; // 设置类型的id,现在是先写死
             this.getData();
         })
     }
@@ -50,8 +53,8 @@ export default class extends PureComponent {
     }
 
     ListFooterComponent = () => {
-        const { navigation,type,tablabel } = this.props;
-        return <View style={{paddingBottom:10}}><MovieMoreBtn text="查看更多" show={true} style={{marginHorizontal:5}} onPress={()=>navigation.navigate('MovieContent',{type:type,title:tablabel})} /></View>;
+        const { navigation,type,tablabel,id } = this.props;
+        return <View style={{paddingBottom:10}}><MovieMoreBtn text="查看更多" show={true} style={{marginHorizontal:5}} onPress={()=>navigation.navigate('MovieContent',{type:type,title:tablabel, id:id})} /></View>;
     }
 
     render() {

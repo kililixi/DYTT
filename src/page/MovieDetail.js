@@ -27,7 +27,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconM from 'react-native-vector-icons/MaterialIcons';
 import Video from '../components/Video';
-import { GetVideoInfo,GetSameVideo,GetDoubanInterests,GetPlayUrl } from '../../util/api';
+import { GetVideoInfo, GetVideoInfo2, GetSameVideo,GetDoubanInterests,GetPlayUrl } from '../../util/api';
 import { Store } from '../../util/store';
 
 const { UIManager } = NativeModules;
@@ -67,7 +67,7 @@ const MovieInfo = ({movieInfo,themeColor,isPlaying,onPlay,isRender}) => (
         <View style={[styles.postertext,isPlaying&&{height:($.WIDTH-40)*9/16}]}>
             <Text style={[styles.title, { color: themeColor }]}>{movieInfo.Name||'正在加载...'}</Text>
             {
-                //<Star style={styles.score} score={movieInfo.Score} themeColor={themeColor} />
+                <Star style={styles.score} score={movieInfo.Score} themeColor={themeColor} />
             }
             {
                 movieInfo.MovieTitle ? <Text style={styles.status}>{movieInfo.MovieTitle}</Text>:null
@@ -398,8 +398,14 @@ export default class MovieDetail extends PureComponent {
 
     GetVideoInfo = async (movieId) => {
         const { findHistory,findFollow,settings:{allowMoblieNetwork,preLoad} } = this.context;
-        const data = await GetVideoInfo(movieId)||{};
+        const data = await GetVideoInfo2(movieId) || {};
+        
+        // const data2 = await GetVideoInfo('/Action/guhuozixiliedianying/')||{};
+        // console.log('aaaa', data);
+        // console.log('aaaa', data2);
         if(this.mounted){
+            console.log('this.mounted');
+            
             const historyItem = findHistory(movieId);
             const hasFollow = findFollow(movieId);
             let _sourceId = null;
@@ -948,7 +954,8 @@ const styles = StyleSheet.create({
 		padding:10,
 		textAlign:'center',
 		fontSize: 14,
-		color: '#666'
+        color: '#666',
+        height: 180
     },
     maskTip:{
         color:'#fff',

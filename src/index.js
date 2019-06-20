@@ -10,19 +10,23 @@ import Icon from 'react-native-vector-icons/Feather';
 const tablist = [
     {
         type: 'movie',
-        name: '电影'
+        name: '电影',
+        id: '9f0c3c70-9fdc-4658-a174-0259429af4df'
     },
     {
         type: 'tv',
-        name: '电视剧'
+        name: '电视剧',
+        id: '193e6f7f-ecc1-45b3-b4eb-ee068fba3f5b'
     },
     {
         type: 'comic',
-        name: '动漫'
+        name: '动漫',
+        id: '9aa93955-8b5f-4e42-ac2f-ed7f9978ec23'
     },
     {
         type: 'variety',
-        name: '综艺'
+        name: '综艺',
+        id: 'c7c9116e-3ddd-4da0-8e08-f248177ecd55'
     }
 ]
 
@@ -55,7 +59,7 @@ export default class TabNavigator extends PureComponent {
                 <Scrollviewpager themeColor={themeColor[0]}>
                     <Home tablabel="首页" {...this.props} />
                     {
-                        tablist.map(el => <Screen key={el.type} type={el.type} tablabel={el.name} {...this.props} />)
+                        tablist.map(el => <Screen id={el.id} key={el.type} type={el.type} tablabel={el.name} {...this.props} />)
                     }
                 </Scrollviewpager>
             </View>

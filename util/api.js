@@ -2,6 +2,8 @@ import cheerio from 'cheerio';
 
 const WEBM = 'https://m.kankanwu.com';
 const WEB = 'https://www.kankanwu.com';
+const LOCAL = 'http://192.168.199.131:8080'
+// const LOCAL = 'http://27.124.2.112:90/vod'
 
 const fetchData = (uri,par={}) => {
     return fetch(uri,par)
@@ -73,6 +75,26 @@ const GetHomeData = async () => {
     return data;
 };
 
+const GetHomeData2 = async () => {
+    const response = await fetch(LOCAL + '/api/v1/video/homeData');
+    let data = await response.json()
+    
+    // 处理数据，
+    Object.keys(data).forEach(key =>{
+        data[key].list = data[key].list.map( video => {
+            return {
+                "ID": video.id,
+                "Cover": $.COVER_URL + video.videoInfo.coverPath,
+                "Name": video.name,
+                "MovieTitle":  video.videoInfo.name,
+                "Score": video.rate,
+            }
+        })
+    })
+
+    return data
+};
+
 //影片详情
 const GetVideoInfo = async (ID)=> {
     const html = await fetch(WEB+`/${ID}`).then(d=>d.text());
@@ -100,7 +122,8 @@ const GetVideoInfo = async (ID)=> {
 `主演：${getTags(0)}
 导演：${getTags(5)}
 简介：${$('#detail-intro').text()}`
-
+    console.log('tex', $('#detail-intro').text());
+    
     const data =  {
         "MoviePlayUrls":MoviePlayUrls,
         "ID": ID,
@@ -114,17 +137,66 @@ const GetVideoInfo = async (ID)=> {
         "Score": 0,
         //"UpdateTime": "2018-09-25T10:58:25",
         "RelateList": RelateList,
+        // "RelateList": [],
     }
     return data;
 }
 
-const GetPlayUrl = async (url)=> {
+const GetVideoInfo2 = async (ID)=> {
+    console.log('getGetVideoInfo2');
+    
+    const response = await fetch(LOCAL + '/api/v1/appvideo/' + ID);
+    let video = await response.json()
+    console.log('videoINfo', video);
+    // videoInfo.
+    const starring = video.videoInfo.videoStarring.map( v=> {
+        return v.starring
+    })
+
+    const tag = video.tags.map( v=> {
+        return v.tagName
+    })
+    
+    const Introduction = 
+    `主演：${starring.join(',')}
+导演：${video.videoInfo.director}
+简介：${video.remark}`
+    const data =  {
+        "MoviePlayUrls":[{
+            "ID": 'play_0',
+            "Index": 0,
+            "Name": video.sysFileUpload.originalName,
+            "PlayUrl": $.VIDEO_URL + video.sysFileUpload.path
+        }],
+        "ID": video.id,
+        "DBID": 0,
+        "Name": video.name,
+        "MovieTitle": video.videoInfo.name,
+        "Cover": $.COVER_URL + video.videoInfo.coverPath,
+        "Tags": tag.join('/'),
+        "Introduction": Introduction,
+        "ReleaseDate": video.updateTime,
+        "Score": video.rate,
+        //"UpdateTime": "2018-09-25T10:58:25",
+        "RelateList": []
+    }
+    return data;
+}
+
+const GetPlayUrl2 = async (url)=> {
     const u = url.replace('https://m','https://www');
     const html = await fetch(u).then(d=>d.text());
     const $ = cheerio.load(html);
     const playUrl = $('iframe').attr('src').split('=')[1];
-    console.warn(playUrl)
+    console.log(playUrl)
     return playUrl;
+}
+
+const GetPlayUrl = async (url)=> {
+    console.log('playurl', url + 'index.m3u8');
+    
+    return url + 'index.m3u8';
+    // return 'https://sohu.zuida-163sina.com/20181024/dj6jsHSy/index.m3u8';
 }
 
 const GetDoubanInterests = ({DBID,start=0,count=5})=>fetchData(`https://frodo.douban.com/api/v2/movie/${DBID}/interests?start=${start}&count=${count}&status=done&order_by=latest&apikey=0b2bdeda43b5688921839c8ecb20399b`,{headers:{"User-Agent":"api-client/1 com.douban.movie"}});
@@ -166,6 +238,32 @@ const GetPageList = async ({pageSize=25,pageIndex=1,Type='',Status='',Area='',Pl
     return data;
 }
 
+//获取列表
+const GetPageList2 = async ({size=10, page=1, id='', Status='', Area='', Plot='', Year='', orderBy='hits'}) => {
+    const response = await fetch(LOCAL + `/api/v1/appvideo/?videoalbumId=${id}&page=${page}&size=${size}`);
+    let data = await response.json();
+    console.log('data', data);
+    
+    const result = data.content.map( video =>{
+        console.log('i', video);
+        
+        return ({
+            "ID": video.id,
+            "Name": video.name,
+            "MovieTitle": video.name,
+            "Cover":  $.COVER_URL + video.videoInfo.coverPath
+        })
+    })
+    console.log('result', result);
+    return result;
+    // return ({
+    //     "ID": video.attr('href'),
+    //     "Name": video.find('img').attr('alt'),
+    //     "MovieTitle": $(el).find('.state').text(),
+    //     "Cover": getHref(video.find('img').attr('src'),WEB),
+    // })
+}   
+
 //GetSearch
 const GetSearch = async ({pageSize=25,pageIndex=1, SearchKey}) => {
     const html = await fetch(WEBM+`/vod-search-wd-${SearchKey}-p-${pageIndex}.html`).then(d=>d.text());
@@ -193,4 +291,12 @@ const GetSearch = async ({pageSize=25,pageIndex=1, SearchKey}) => {
     };
 }
 
-export {fetchData,GetHomeData,GetVideoInfo,GetPageList,GetDoubanInterests,GetPlayUrl,GetSearch}
+//
+const GetAreacode = async (id) => {
+    id = id || ''
+    const response = await fetch(LOCAL + `/api/v1/appvideo/videoAlbum?id=${id}`);
+    let data = await response.json();
+    console.log('categories', data);
+    return data;
+}
+export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetAreacode}
