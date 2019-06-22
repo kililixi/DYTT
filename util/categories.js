@@ -256,21 +256,21 @@ const Categories = {
                 },
             ]
         },
-        {
-            name: "状态",
-            icon: 'layers',
-            cate: 'Status',
-            type: [
-                {
-                    name:"连载中",
-                    id:1
-                },
-                {
-                    name:"已完结",
-                    id:2
-                },
-            ]
-        }
+        // {
+        //     name: "状态",
+        //     icon: 'layers',
+        //     cate: 'Status',
+        //     type: [
+        //         {
+        //             name:"连载中",
+        //             id:1
+        //         },
+        //         {
+        //             name:"已完结",
+        //             id:2
+        //         },
+        //     ]
+        // }
     ],
     comic: [
         {
@@ -332,21 +332,21 @@ const Categories = {
                 },
             ]
         },
-        {
-            name: "状态",
-            icon: 'layers',
-            cate: 'Status',
-            type: [
-                {
-                    name:"连载中",
-                    id:1
-                },
-                {
-                    name:"已完结",
-                    id:2
-                },
-            ]
-        }
+        // {
+        //     name: "状态",
+        //     icon: 'layers',
+        //     cate: 'Status',
+        //     type: [
+        //         {
+        //             name:"连载中",
+        //             id:1
+        //         },
+        //         {
+        //             name:"已完结",
+        //             id:2
+        //         },
+        //     ]
+        // }
     ],
     variety: [
         {
@@ -416,21 +416,21 @@ const Categories = {
                 },
             ]
         },
-        {
-            name: "状态",
-            icon: 'layers',
-            cate: 'Status',
-            type: [
-                {
-                    name:"连载中",
-                    id:1
-                },
-                {
-                    name:"已完结",
-                    id:2
-                },
-            ]
-        }
+        // {
+        //     name: "状态",
+        //     icon: 'layers',
+        //     cate: 'Status',
+        //     type: [
+        //         {
+        //             name:"连载中",
+        //             id:1
+        //         },
+        //         {
+        //             name:"已完结",
+        //             id:2
+        //         },
+        //     ]
+        // }
     ]
 }
 

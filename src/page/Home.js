@@ -120,7 +120,7 @@ export default class Home extends PureComponent {
                     <Fragment key={i}>
                         <MovieTitle title={d.name} icon={d.icon} themeColor={themeColor[0]} />
                         <MovieList isRender={!loading} style={{marginTop:-10}} data={data[d.listType]?data[d.listType]['list']:[]} navigation={navigation} themeColor={themeColor[0]} />
-                        <MovieMoreBtn show={!loading} text={"查看更多"+d.name} onPress={this.goDetail({type:d.listType,title:d.name})} />
+                        <MovieMoreBtn show={!loading} text={"查看更多"+d.name} onPress={this.goDetail({type:d.listType,title:d.name, id: d.id })} />
                     </Fragment>
                 ))
             }

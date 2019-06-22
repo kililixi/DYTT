@@ -76,7 +76,7 @@ const GetHomeData = async () => {
 };
 
 const GetHomeData2 = async () => {
-    const response = await fetch(LOCAL + '/api/v1/video/homeData');
+    const response = await fetch(LOCAL + '/api/v1/appVideo/homeData');
     let data = await response.json()
     
     // 处理数据，
@@ -145,7 +145,7 @@ const GetVideoInfo = async (ID)=> {
 const GetVideoInfo2 = async (ID)=> {
     console.log('getGetVideoInfo2');
     
-    const response = await fetch(LOCAL + '/api/v1/appvideo/' + ID);
+    const response = await fetch(LOCAL + '/api/v1/appVideo/' + ID);
     let video = await response.json()
     console.log('videoINfo', video);
     // videoInfo.
@@ -225,6 +225,8 @@ const GetPageList = async ({pageSize=25,pageIndex=1,Type='',Status='',Area='',Pl
     //https://m.kankanwu.com/${Type}/index_${pageIndex}_${Plot}__${Year}__${orderBy}_${Area}_1.html
     //const html = await fetch(WEBM+`/${Type}/index_${pageIndex}_${Plot}_${Status}_${Year}__${orderBy}_${Area}_1.html`).then(d=>d.text());
     const html = await fetch(WEB+`/index.php?s=Showlist-show-id-${mapType[Type]}-mcid-${Plot}-lz-${Status}-area-${Area}-year-${Year}-letter--order-${orderBy}-picm-1-p-${pageIndex}.html`).then(d=>d.text());
+    console.log('`/index.php?s=Showlist-show-id-${mapType[Type]}-mcid-${Plot}-lz-${Status}-area-${Area}-year-${Year}-letter--order-${orderBy}-picm-1-p-${pageIndex}.html`', `/index.php?s=Showlist-show-id-${mapType[Type]}-mcid-${Plot}-lz-${Status}-area-${Area}-year-${Year}-letter--order-${orderBy}-picm-1-p-${pageIndex}.html`);
+    
     const $ = cheerio.load(html);
     const data =  $('#contents li').map((i, el)=>{
         const video = $(el).find('a');
@@ -240,7 +242,7 @@ const GetPageList = async ({pageSize=25,pageIndex=1,Type='',Status='',Area='',Pl
 
 //获取列表
 const GetPageList2 = async ({size=10, page=1, id='', Status='', Area='', Plot='', Year='', orderBy='hits'}) => {
-    const response = await fetch(LOCAL + `/api/v1/appvideo/?videoalbumId=${id}&page=${page}&size=${size}`);
+    const response = await fetch(LOCAL + `/api/v1/appVideo/?videoalbumId=${id}&countryCode=${Area}&publishTime=${Year}&page=${page}&size=${size}`);
     let data = await response.json();
     console.log('data', data);
     
@@ -291,12 +293,70 @@ const GetSearch = async ({pageSize=25,pageIndex=1, SearchKey}) => {
     };
 }
 
+const GetSearch2 = async ({pageSize=10,pageIndex=1, SearchKey}) => {
+    // const html = await fetch(WEBM+`/vod-search-wd-${SearchKey}-p-${pageIndex}.html`).then(d=>d.text());
+    // const $ = cheerio.load(html);
+    // const getInfo = (info,i) => info.find('p').eq(i).find('a').map((i,el) => $(el).text()).get().join(' ');
+    // const data =  $('#resize_list li').map((i, el)=>{
+    //     const video = $(el).find('a');
+    //     const info = $(el).find('.list_info');
+    //     return ({
+    //         "ID": video.attr('href'),
+    //         "Name": video.attr('title'),
+    //         "Cover": getHref(video.find('img').attr('src'),WEB),
+    //         "Info":{
+    //             "Type":getInfo(info,1),
+    //             "Art":getInfo(info,2),
+    //             "Status":info.find('p').eq(3).text(),
+    //             "Time":info.find('p').eq(4).text(),
+    //         }
+    //     })
+    // }).get()
+
+    const response = await fetch(LOCAL + `/api/v1/appVideo/search?key=${SearchKey}&page=${pageIndex}&size=${pageSize}`);
+    let data = await response.json();
+    const result = data.content.map((video,el)=>{
+        return ({
+            "ID": video.id,
+            "Name": video.name,
+            "Cover": $.COVER_URL + video.videoInfo.coverPath,
+            "Info":{
+                "Type":video.videoalbumName,
+                "Art": '',
+                "Status": '',
+                "Time": video.videoInfo.publishTime
+            }
+        })
+    })
+    const isEnd = (data.totalElements <= pageSize * pageIndex)
+    // const isEnd = pageIndex == 1 ? data.totalElements
+    // console.log('sarch', result, isEnd, pageIndex);
+    return {
+        list: result,
+        isEnd: isEnd
+    };
+}
+
 //
-const GetAreacode = async (id) => {
+const GetAlbum = async (id) => {
     id = id || ''
-    const response = await fetch(LOCAL + `/api/v1/appvideo/videoAlbum?id=${id}`);
+    const response = await fetch(LOCAL + `/api/v1/appAlbum?id=${id}`);
     let data = await response.json();
     console.log('categories', data);
     return data;
 }
-export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetAreacode}
+
+const GetCountryCode = async (type) => {
+    if(type == null || type == '')
+        return []
+    const response = await fetch(LOCAL + `/api/v1/appCode?type=${type}`);
+    let data = await response.json();
+    return data.map((v,index) => {
+        return {
+            id: v.detailCode,
+            name: v.detailName
+        }
+    });
+}
+
+export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetSearch2, GetCountryCode, GetAlbum}

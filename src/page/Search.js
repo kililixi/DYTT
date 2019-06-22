@@ -27,7 +27,7 @@ import Loading from '../components/Loading';
 import SearchList from '../components/SearchList';
 import AnimatedView from '../components/AnimatedView';
 import Storage from '../../util/storage';
-import { GetSearch } from '../../util/api';
+import { GetSearch, GetSearch2 } from '../../util/api';
 
 const { UIManager } = NativeModules;
 
@@ -67,15 +67,22 @@ class SearchResult extends PureComponent {
     }
 
     getData = async () => {
-        const data = await GetSearch({ SearchKey: this.keywords, pageIndex: this.page, pageSize: this.pageSize });
+        // const data = await GetSearch({ SearchKey: this.keywords, pageIndex: this.page, pageSize: this.pageSize });
+        const data = await GetSearch2({ SearchKey: this.keywords, pageIndex: this.page, pageSize: this.pageSize });
+        console.log('searchData', data);
+        
         if( this.mounted ){
             LayoutAnimation.easeInEaseOut();
             if (data.isEnd) {
+                console.log('search11111');
+                
                 this.setState({
+                    data: [...this.state.data, ...data.list],
                     isEnding: true,
                     isRender: true,
                 })
             } else {
+                console.log('search2222');
                 this.setState({
                     data: [...this.state.data, ...data.list],
                     isRender: true,
@@ -288,7 +295,7 @@ export default class Search extends PureComponent {
                             underlineColorAndroid='transparent'
                             onSubmitEditing={this.onSubmit}
                             onChangeText={this.onChange}
-                            placeholder='搜索影片、演员~'
+                            placeholder='搜索影片名称'
                             returnKeyLabel='搜索'
                             placeholderTextColor='#909090'
                         />

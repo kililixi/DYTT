@@ -24,7 +24,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import AppTop from '../components/AppTop';
 import Loading from '../components/Loading';
 import MovieList from '../components/MovieList';
-import { GetPageList, GetAreacode } from '../../util/api';
+import { GetPageList2, GetPageList, GetCountryCode, GetAlbum } from '../../util/api';
 import  { CommonList,Categories } from '../../util/categories';
 const { UIManager } = NativeModules;
 
@@ -65,15 +65,22 @@ class DrawerContent extends PureComponent {
     }
 
     getCode = async () => {
-        const areas = await GetAreacode()
-        // console.log('areas', areas);
+        // 可以选择的只能是大类下的细类，所以要传albumId，否者结果是全部选项
+        const albums = await GetAlbum(this.props.albumId)
+        const areas = await GetCountryCode('dycd')
+        // 构造查询条件， 分类和地区是后台数据，时间是app构造的
         this.setState({
             typeList: [{
                 cate: "Plot",
                 icon: "compass",
                 name: "分类",
-                type: (areas[0].children !=null) ? areas[0].children : null
-            }]
+                type: (albums[0].children !=null) ? albums[0].children : null
+            },{
+                cate: "Area",
+                icon: "map-pin",
+                name: "分类",
+                type: areas
+            }, CommonList[1]]
         })
     }
 
@@ -206,7 +213,13 @@ export default class extends PureComponent {
 
     getData = async () => {
         const { Status, Plot, Area, Year } = this.state;
-        const data = await GetPageList({ pageIndex: this.page, pageSize: this.pageSize, Type:this.type, Status:Status.id, Area:Area.id, Plot:Plot.id, Year:Year.id,orderBy:'addtime' });
+        const {id} = this.props.navigation.state.params
+        // 默认是大类，比如电影、动漫，除非用户选择了某种类型
+        const albumId = Plot.id || id
+        console.log('MovieContent ID', Plot, id);
+        const data = await GetPageList2({ pageIndex: this.page, pageSize: this.pageSize, id: albumId, Type:this.type, Status:Status.id, Area:Area.id, Plot:Plot.id, Year:Year.id,orderBy:'addtime' });
+        console.log('MovieContent', data);
+        
         if(this.mounted){
             LayoutAnimation.easeInEaseOut();
             this.setState({
@@ -270,7 +283,7 @@ export default class extends PureComponent {
 
     render() {
         const { navigation, screenProps: { themeColor } } = this.props;
-        const { title, type } = navigation.state.params;
+        const { title, type, id } = navigation.state.params;
         const { Status, Plot, Area, Year, isRender, data, isEnding } = this.state;
         return (
             <DrawerLayout
@@ -281,7 +294,7 @@ export default class extends PureComponent {
                 onDrawerOpen={this.onDrawerOpen}
                 onDrawerClose={this.onDrawerClose}
                 drawerWidth={$.WIDTH * .8}
-                renderNavigationView={() => <DrawerContent ref={drawer => this.drawerContent = drawer} themeColor={themeColor} closeDrawer={this.closeDrawer} type={type} state={{ Status, Plot, Area, Year }} setType={this.setType} />}
+                renderNavigationView={() => <DrawerContent ref={drawer => this.drawerContent = drawer} albumId={id} themeColor={themeColor} closeDrawer={this.closeDrawer} type={type} state={{ Status, Plot, Area, Year }} setType={this.setType} />}
             >
                 <View style={[styles.content, styles.bg]}>
                     <AppTop navigation={navigation} themeColor={themeColor} title={title} isBack={true} >
