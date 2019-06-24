@@ -38,7 +38,7 @@ class StarCurrent extends PureComponent {
     render() {
         return (
             <Animated.View style={[styles.star, { width: this.width }]}>
-                <Image source={require('../img/star.png')} tintColor={this.props.themeColor} style={styles.star} />
+                <Image source={require('../img/public/star.png')} tintColor={this.props.themeColor} style={styles.star} />
             </Animated.View>
         )
     }
@@ -46,7 +46,7 @@ class StarCurrent extends PureComponent {
 
 export default ({ score, style, themeColor, isShowNum = true }) => (
     <View style={[styles.starcon, style]}>
-        <Image source={require('../img/star.png')} style={styles.star} />
+        <Image source={require('../img/public/star.png')} style={styles.star} />
         <StarCurrent score={score} themeColor={themeColor} />
         {
             isShowNum&&<Text style={[styles.score, { color: themeColor }]}>{score || '0.0'}</Text>

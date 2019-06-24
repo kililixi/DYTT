@@ -58,7 +58,7 @@ export default class DrawerContent extends PureComponent {
 		const { themeColor } = this.props.screenProps;
 		return (
             <ScrollView style={{flex:1}}>
-                <ImageBackground source={require('../img/photo.jpg')} style={[styles.top,{backgroundColor:themeColor[0]}]}>
+                <ImageBackground source={require('../img/home/photo.jpg')} style={[styles.top,{backgroundColor:themeColor[0]}]}>
                     {
                         LatestItem&&
                         <BorderlessButton style={styles.item} activeOpacity={.8} onPress={()=>this.props.navigation.navigate('MovieDetail',{movieId:LatestItem.id})}>

@@ -189,7 +189,6 @@ class SearchHistory extends PureComponent {
 
 
 export default class Search extends PureComponent {
-
     constructor(props) {
         super(props);
         this.state = {

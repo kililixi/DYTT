@@ -16,6 +16,8 @@ import { BorderlessButton } from 'react-native-gesture-handler';
 export default class AppTop extends PureComponent {
     onhandle = () => {
         const { navigation, onPress, isBack } = this.props;
+        console.log('App-topnavigation', navigation);
+        
         if(isBack){
             navigation.goBack();
         }else{
@@ -24,17 +26,20 @@ export default class AppTop extends PureComponent {
         onPress && onPress();
     }
     render() {
-        const { title, themeColor, children, isBack = false } = this.props;
+        const { title, themeColor, children, isBack = false, showLeftIcon = true } = this.props;
         return (
             <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.appbar}>
-                <BorderlessButton
-                    activeOpacity={.8}
-                    style={styles.btn}
-                    onPress={this.onhandle}
-                >
-                    <Icon name={isBack ? 'chevron-left' : 'menu'} size={isBack ? 24 : 20} color='#fff' />
-                </BorderlessButton>
-                <Text style={styles.apptitle} numberOfLines={1}>{title}</Text>
+                {
+                    showLeftIcon && 
+                    <BorderlessButton
+                        activeOpacity={.8}
+                        style={styles.btn}
+                        onPress={this.onhandle}
+                    >
+                        <Icon name={isBack ? 'chevron-left' : 'menu'} size={isBack ? 24 : 20} color='#fff' />
+                    </BorderlessButton>
+                }
+                <Text style={[styles.apptitle, showLeftIcon?null:styles.titleWithNoBtn]} numberOfLines={1}>{title}</Text>
                 {children || null}
             </LinearGradient>
         );
@@ -46,6 +51,7 @@ const styles = StyleSheet.create({
         paddingTop: $.STATUS_HEIGHT,
         flexDirection: 'row',
         alignItems: 'center',
+        height: 64
     },
     btn: {
         width: 48,
@@ -59,5 +65,8 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
         color: '#fff'
+    },
+    titleWithNoBtn: {
+        paddingLeft: 48
     }
 });

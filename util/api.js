@@ -2,8 +2,8 @@ import cheerio from 'cheerio';
 
 const WEBM = 'https://m.kankanwu.com';
 const WEB = 'https://www.kankanwu.com';
-const LOCAL = 'http://192.168.199.131:8080'
-// const LOCAL = 'http://27.124.2.112:90/vod'
+// const LOCAL = 'http://192.168.199.131:8080'
+const LOCAL = 'http://27.124.2.112:90/vod'
 
 const fetchData = (uri,par={}) => {
     return fetch(uri,par)

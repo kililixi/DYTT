@@ -8,7 +8,7 @@
 import './util/global';
 import React,{ PureComponent } from 'react';
 import { StatusBar, BackHandler, Platform, ToastAndroid } from 'react-native';
-import { createStackNavigator, createAppContainer, createDrawerNavigator } from "react-navigation";
+import { createStackNavigator, createAppContainer, createDrawerNavigator, createBottomTabNavigator } from "react-navigation";
 import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator';
 import SplashScreen from 'react-native-splash-screen';
 import Index from './src';
@@ -21,11 +21,15 @@ import Theme,{themes,themesGradient} from './src/page/Theme';
 import Follow from './src/page/Follow';
 import Search from './src/page/Search';
 import Setting from './src/page/Setting';
+import MineScene from './src/page/PersonCenter'
+import Category from './src/page/Category'
 import UpdateModal from './src/components/UpdateModal';
 import { StoreProvider } from './util/store';
 import Storage from './util/storage';
 import CodePush from "react-native-code-push";
 const CODE_PUSH_PRODUCTION_KEY = 'iP5vE4FFzkilVLeIfVDZ5LwjUvdg67842615-88ee-487c-ab21-9908f18597db';
+import Icon from 'react-native-vector-icons/FontAwesome';
+// import IconFoundation from 'react-native-vector-icons/Foundation';
 
 const StackNavigatorConfig = {
 	headerMode: 'none',
@@ -68,14 +72,76 @@ const Drawer = createDrawerNavigator({
 	Setting: Setting,
 },DrawerNavigatorConfig);
 
-const App = createAppContainer(createStackNavigator({
+const Stack = createStackNavigator({
 	Drawer: Drawer,
 	Search: Search,
 	MovieContent: MovieContent,
 	MovieDetail: MovieDetail,
 	Comment: Comment,
-}, StackNavigatorConfig));
+}, StackNavigatorConfig)
 
+const TabNavigator = createBottomTabNavigator({
+	Home: { 
+		screen: Stack,  
+		navigationOptions: ({ navigation }) => ({
+			title: '首页',
+		}) 
+	},
+	Latest: { 
+		screen: Stack,
+		navigationOptions: ({ navigation }) => ({
+			title: '最新',
+		}) 
+	},
+	Categories: { 
+		screen: Category,
+		navigationOptions: ({ navigation }) => ({
+			title: '分类',
+		}) 
+	},
+	PersonCenter: { 
+		screen: MineScene,
+		navigationOptions: ({ navigation }) => ({
+			title: '个人中心'
+		})  
+	}
+}, {
+	defaultNavigationOptions: ({ navigation, screenProps }) => ({
+	  tabBarIcon: ({ focused, tintColor }) =>
+		getTabBarIcon(navigation, focused, tintColor),
+		tabBarOptions: {
+			activeTintColor: screenProps.themeColor[0],
+			inactiveTintColor: 'gray',
+		}
+	})
+});
+
+const App = createAppContainer(TabNavigator )
+
+// const App = createAppContainer(createStackNavigator({
+// 	Drawer: Drawer,
+// 	Search: Search,
+// 	MovieContent: MovieContent,
+// 	MovieDetail: MovieDetail,
+// 	Comment: Comment,
+// }, StackNavigatorConfig));
+
+const getTabBarIcon = (navigation, focused, tintColor) => {
+	const { routeName } = navigation.state;
+	let IconComponent = Icon;
+	let iconName;
+	if (routeName === 'Home') {
+	//   iconName = `ios-information-circle${focused ? '' : '-outline'}`;
+		iconName = 'home'
+	} else if (routeName === 'PersonCenter') {
+		iconName = 'user'
+	} else if(routeName === 'Latest') {
+		iconName = 'film'
+	} else if(routeName === 'Categories') {
+		iconName = 'th'
+	}
+	return <IconComponent name={iconName} size={18}  color={tintColor}/>;
+}
 export default class extends PureComponent {
 
 	state = {
@@ -105,7 +171,7 @@ export default class extends PureComponent {
 		}
 		setTimeout(() => {
 			SplashScreen.hide();
-			this.syncImmediate(); //开始检查更新
+			// this.syncImmediate(); //开始检查更新
 		}, 500);
 	}
 

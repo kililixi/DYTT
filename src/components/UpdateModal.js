@@ -137,7 +137,7 @@ export default class UpdateModal extends PureComponent {
 					<LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.header}>
 						<Icon name="rocket" color="#fff" size={30} />
 						<Text style={styles.new}>发现新版本{label}</Text>
-						<Image style={styles.header_bg} resizeMode="cover" source={require('../img/updata.png')} />
+						<Image style={styles.header_bg} resizeMode="cover" source={require('../img/public/updata.png')} />
 					</LinearGradient>
 					{
 						status===0&&
