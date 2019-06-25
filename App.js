@@ -23,6 +23,7 @@ import Search from './src/page/Search';
 import Setting from './src/page/Setting';
 import MineScene from './src/page/PersonCenter'
 import Category from './src/page/Category'
+import CategoryDetail from './src/page/CategoryDetail'
 import UpdateModal from './src/components/UpdateModal';
 import { StoreProvider } from './util/store';
 import Storage from './util/storage';
@@ -80,6 +81,11 @@ const Stack = createStackNavigator({
 	Comment: Comment,
 }, StackNavigatorConfig)
 
+const CategoryTab = createStackNavigator({
+	Category: Category,
+	CategoryDetail: CategoryDetail
+}, StackNavigatorConfig)
+
 const TabNavigator = createBottomTabNavigator({
 	Home: { 
 		screen: Stack,  
@@ -94,7 +100,7 @@ const TabNavigator = createBottomTabNavigator({
 		}) 
 	},
 	Categories: { 
-		screen: Category,
+		screen: CategoryTab,
 		navigationOptions: ({ navigation }) => ({
 			title: '分类',
 		}) 

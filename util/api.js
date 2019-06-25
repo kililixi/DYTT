@@ -2,8 +2,6 @@ import cheerio from 'cheerio';
 
 const WEBM = 'https://m.kankanwu.com';
 const WEB = 'https://www.kankanwu.com';
-// const LOCAL = 'http://192.168.199.131:8080'
-const LOCAL = 'http://27.124.2.112:90/vod'
 
 const fetchData = (uri,par={}) => {
     return fetch(uri,par)
@@ -25,6 +23,12 @@ const getHref = (s,m) => {
         return m+s;
     }
 }
+
+const GetAlbumByLevel = async () => {
+    const response = await fetch($.LOCAL + '/api/v1/appAlbum/member');
+    let data = await response.json()
+    return data
+};
 
 const GetHomeData = async () => {
     const html = await fetch(WEBM).then(d=>d.text());
@@ -76,7 +80,7 @@ const GetHomeData = async () => {
 };
 
 const GetHomeData2 = async () => {
-    const response = await fetch(LOCAL + '/api/v1/appVideo/homeData');
+    const response = await fetch($.LOCAL + '/api/v1/appVideo/homeData');
     let data = await response.json()
     
     // 处理数据，
@@ -145,7 +149,7 @@ const GetVideoInfo = async (ID)=> {
 const GetVideoInfo2 = async (ID)=> {
     console.log('getGetVideoInfo2');
     
-    const response = await fetch(LOCAL + '/api/v1/appVideo/' + ID);
+    const response = await fetch($.LOCAL + '/api/v1/appVideo/' + ID);
     let video = await response.json()
     console.log('videoINfo', video);
     // videoInfo.
@@ -242,7 +246,7 @@ const GetPageList = async ({pageSize=25,pageIndex=1,Type='',Status='',Area='',Pl
 
 //获取列表
 const GetPageList2 = async ({size=10, page=1, id='', Status='', Area='', Plot='', Year='', orderBy='hits'}) => {
-    const response = await fetch(LOCAL + `/api/v1/appVideo/?videoalbumId=${id}&countryCode=${Area}&publishTime=${Year}&page=${page}&size=${size}`);
+    const response = await fetch($.LOCAL + `/api/v1/appVideo/?videoalbumId=${id}&countryCode=${Area}&publishTime=${Year}&page=${page}&size=${size}`);
     let data = await response.json();
     console.log('data', data);
     
@@ -313,7 +317,7 @@ const GetSearch2 = async ({pageSize=10,pageIndex=1, SearchKey}) => {
     //     })
     // }).get()
 
-    const response = await fetch(LOCAL + `/api/v1/appVideo/search?key=${SearchKey}&page=${pageIndex}&size=${pageSize}`);
+    const response = await fetch($.LOCAL + `/api/v1/appVideo/search?key=${SearchKey}&page=${pageIndex}&size=${pageSize}`);
     let data = await response.json();
     const result = data.content.map((video,el)=>{
         return ({
@@ -340,7 +344,7 @@ const GetSearch2 = async ({pageSize=10,pageIndex=1, SearchKey}) => {
 //
 const GetAlbum = async (id) => {
     id = id || ''
-    const response = await fetch(LOCAL + `/api/v1/appAlbum?id=${id}`);
+    const response = await fetch($.LOCAL + `/api/v1/appAlbum?id=${id}`);
     let data = await response.json();
     console.log('categories', data);
     return data;
@@ -349,7 +353,7 @@ const GetAlbum = async (id) => {
 const GetCountryCode = async (type) => {
     if(type == null || type == '')
         return []
-    const response = await fetch(LOCAL + `/api/v1/appCode?type=${type}`);
+    const response = await fetch($.LOCAL + `/api/v1/appCode?type=${type}`);
     let data = await response.json();
     return data.map((v,index) => {
         return {
@@ -359,4 +363,4 @@ const GetCountryCode = async (type) => {
     });
 }
 
-export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetSearch2, GetCountryCode, GetAlbum}
+export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetSearch2, GetCountryCode, GetAlbum, GetAlbumByLevel}

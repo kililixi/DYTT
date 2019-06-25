@@ -6,40 +6,12 @@ import Scrollviewpager from '../components/Scrollviewpager';
 import AppTop from '../components/AppTop';
 import Separator from '../components/Separator'
 import Icon from 'react-native-vector-icons/Feather';
+import {GetAlbumByLevel} from '../../util/api'
 
-const maps = [
-    [
-        {
-            listType:'scrolling',
-            name:'轮播图',
-            isRender:true
-        },
-        {
-            listType:'movie',
-            name:'电影',
-            icon:'film',
-            id: '9f0c3c70-9fdc-4658-a174-0259429af4df'
-        },
-        {
-            listType:'tv',
-            name:'电视剧',
-            icon:'tv',
-            id: '193e6f7f-ecc1-45b3-b4eb-ee068fba3f5b'
-        },
-        {
-            listType:'comic',
-            name:'动漫',
-            icon:'gitlab',
-            id: '9aa93955-8b5f-4e42-ac2f-ed7f9978ec23'
-        },
-        {
-            listType:'variety',
-            name:'娱乐',
-            icon:'anchor',
-            id: 'c7c9116e-3ddd-4da0-8e08-f248177ecd55'
-        },
-    ],
-    [
+const maps = [{
+    code: 'gold',
+    name: '黄金会员专属',
+    content: [
         {
             listType:'scrolling',
             name:'轮播图',
@@ -70,9 +42,86 @@ const maps = [
             id: 'c7c9116e-3ddd-4da0-8e08-f248177ecd55'
         },
     ]
-]
+}, {
+    code: 'silver',
+    name: '白银会员专属',
+    content: [
+        {
+            listType:'scrolling',
+            name:'轮播图',
+            isRender:true
+        },
+        {
+            listType:'movie',
+            name:'电影',
+            icon:'film',
+            id: '9f0c3c70-9fdc-4658-a174-0259429af4df'
+        },
+        {
+            listType:'tv',
+            name:'电视剧',
+            icon:'tv',
+            id: '193e6f7f-ecc1-45b3-b4eb-ee068fba3f5b'
+        },
+        {
+            listType:'comic',
+            name:'动漫',
+            icon:'gitlab',
+            id: '9aa93955-8b5f-4e42-ac2f-ed7f9978ec23'
+        },
+        {
+            listType:'variety',
+            name:'娱乐',
+            icon:'anchor',
+            id: 'c7c9116e-3ddd-4da0-8e08-f248177ecd55'
+        },
+    ]
+}]
 
 export default class Category extends PureComponent {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            loading:true,
+            data:[]
+        }
+	}
+
+    goDetail = (params) => () => {
+        this.props.navigation.navigate('CategoryDetail',params);
+    }
+
+    GetAlbum = async () => {
+        const data = await GetAlbumByLevel();
+        // console.log('data', this.mounted)
+        const transferData = data.map( v=> {
+            
+            const transferData = []
+            for(let i=0,len= v.content.length; i<len; i+=4 ){
+                transferData.push( v.content.slice(i,i+4));
+            }
+            v.content2 = transferData
+
+        })
+        console.log('data', data)
+        if(this.mounted){
+            this.setState({
+                data,
+                loading:false
+            })
+        }
+    }
+    
+    componentDidMount() {
+        this.mounted = true;
+        this.GetAlbum();
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+    }
+
     render() {
         const {navigation,screenProps:{themeColor}} = this.props;
         return (
@@ -82,22 +131,26 @@ export default class Category extends PureComponent {
 
                 <View>
                     {
-                        maps.map((item, m)=>(
+                        this.state.data.map((item, m)=>(
                             <View key={m}>
                                 <TouchableOpacity style={[styles.huiyuanBtn]} activeOpacity={.8}>
-                                    <Text style={[styles.text,{color: themeColor[0]}]}>黄金</Text>
+                                    <Text style={[styles.text,{color: themeColor[0]}]}>{item.name}</Text>
                                 </TouchableOpacity>
-                                <View style={styles.links}>
-                                    {
-                                        item.filter(el=>!el.isRender).map((d,i)=>(
-                                            <TouchableOpacity key={i} style={styles.linkitem} activeOpacity={.9} >
-                                                <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linkicon}><Icon name={d.icon} color={'#fff'} size={16} /></LinearGradient>
-                                                <Text style={styles.linktext}>{d.name}</Text>
-                                            </TouchableOpacity>
-                                        ))
-                                    }
-                                </View>
                                 <Separator />
+                                {
+                                    item.content2.map((sub, s)=>(
+                                        <View style={styles.links} key={s}>
+                                        {
+                                            sub.filter(el=>!el.isRender).map((d,i)=>(
+                                                <TouchableOpacity key={i} style={styles.linkitem} activeOpacity={.9} onPress={this.goDetail({type:d.listType,title:d.name,id:d.id})} >
+                                                    <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linkicon}><Icon name={d.icon} color={'#fff'} size={16} /></LinearGradient>
+                                                    <Text style={styles.linktext}>{d.name}</Text>
+                                                </TouchableOpacity>
+                                            ))
+                                        }
+                                        </View>
+                                    ))
+                                }
                             </View>
                         ))
                     }
