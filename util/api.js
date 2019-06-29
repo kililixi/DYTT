@@ -1,4 +1,5 @@
 import cheerio from 'cheerio';
+import request from './request'
 
 const WEBM = 'https://m.kankanwu.com';
 const WEB = 'https://www.kankanwu.com';
@@ -298,25 +299,6 @@ const GetSearch = async ({pageSize=25,pageIndex=1, SearchKey}) => {
 }
 
 const GetSearch2 = async ({pageSize=10,pageIndex=1, SearchKey}) => {
-    // const html = await fetch(WEBM+`/vod-search-wd-${SearchKey}-p-${pageIndex}.html`).then(d=>d.text());
-    // const $ = cheerio.load(html);
-    // const getInfo = (info,i) => info.find('p').eq(i).find('a').map((i,el) => $(el).text()).get().join(' ');
-    // const data =  $('#resize_list li').map((i, el)=>{
-    //     const video = $(el).find('a');
-    //     const info = $(el).find('.list_info');
-    //     return ({
-    //         "ID": video.attr('href'),
-    //         "Name": video.attr('title'),
-    //         "Cover": getHref(video.find('img').attr('src'),WEB),
-    //         "Info":{
-    //             "Type":getInfo(info,1),
-    //             "Art":getInfo(info,2),
-    //             "Status":info.find('p').eq(3).text(),
-    //             "Time":info.find('p').eq(4).text(),
-    //         }
-    //     })
-    // }).get()
-
     const response = await fetch($.LOCAL + `/api/v1/appVideo/search?key=${SearchKey}&page=${pageIndex}&size=${pageSize}`);
     let data = await response.json();
     const result = data.content.map((video,el)=>{
@@ -324,6 +306,32 @@ const GetSearch2 = async ({pageSize=10,pageIndex=1, SearchKey}) => {
             "ID": video.id,
             "Name": video.name,
             "Cover": $.COVER_URL + video.videoInfo.coverPath,
+            "Info":{
+                "Type":video.videoalbumName,
+                "Art": '',
+                "Status": '',
+                "Time": video.videoInfo.publishTime
+            }
+        })
+    })
+    const isEnd = (data.totalElements <= pageSize * pageIndex)
+    // const isEnd = pageIndex == 1 ? data.totalElements
+    // console.log('sarch', result, isEnd, pageIndex);
+    return {
+        list: result,
+        isEnd: isEnd
+    };
+}
+
+const GetLatest = async ({pageSize=10,pageIndex=1, SearchKey}) => {
+    const response = await fetch($.LOCAL + `/api/v1/appVideo/latest?page=${pageIndex}&size=${pageSize}&sort=updateTime`);
+    let data = await response.json();
+    const result = data.content.map((video,el)=>{
+        return ({
+            "ID": video.id,
+            "Name": video.name,
+            "Cover": $.COVER_URL + video.videoInfo.coverPath,
+            "UpdateTime": video.updateTime,
             "Info":{
                 "Type":video.videoalbumName,
                 "Art": '',
@@ -363,4 +371,37 @@ const GetCountryCode = async (type) => {
     });
 }
 
-export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetSearch2, GetCountryCode, GetAlbum, GetAlbumByLevel}
+const Login = ({username, password}) => {
+    return request({
+        url: '/api/v1/login-app',
+        method: 'post',
+        data: {
+            loginAcc: username,
+            password: password
+        }
+    })    
+}
+
+const Logout = () => {
+    return request({
+        url: '/api/v1/session',
+        method: 'delete'
+    })    
+}
+
+const Register = (data) => {
+    return request({
+        url: '/api/v1/register-app',
+        method: 'post',
+        data
+    })    
+}
+
+const GetSession = () => {
+    return request({
+        url: '/api/v1/session',
+        method: 'get'
+    })    
+}
+
+export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetSearch2, GetCountryCode, GetAlbum, GetAlbumByLevel, GetLatest, Login, GetSession, Logout, Register}

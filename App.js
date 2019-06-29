@@ -7,7 +7,7 @@
  */
 import './util/global';
 import React,{ PureComponent } from 'react';
-import { StatusBar, BackHandler, Platform, ToastAndroid } from 'react-native';
+import { StatusBar, BackHandler, Platform, ToastAndroid, NetInfo } from 'react-native';
 import { createStackNavigator, createAppContainer, createDrawerNavigator, createBottomTabNavigator } from "react-navigation";
 import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator';
 import SplashScreen from 'react-native-splash-screen';
@@ -24,9 +24,14 @@ import Setting from './src/page/Setting';
 import MineScene from './src/page/PersonCenter'
 import Category from './src/page/Category'
 import CategoryDetail from './src/page/CategoryDetail'
+import Latest from './src/page/Latest'
+import Login from './src/page/Login'
+import Login2 from './src/page/Login2'
+import Register from './src/page/Register'
 import UpdateModal from './src/components/UpdateModal';
 import { StoreProvider } from './util/store';
 import Storage from './util/storage';
+import {GetSession} from './util/api'
 import CodePush from "react-native-code-push";
 const CODE_PUSH_PRODUCTION_KEY = 'iP5vE4FFzkilVLeIfVDZ5LwjUvdg67842615-88ee-487c-ab21-9908f18597db';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -83,7 +88,13 @@ const Stack = createStackNavigator({
 
 const CategoryTab = createStackNavigator({
 	Category: Category,
-	CategoryDetail: CategoryDetail
+	CategoryDetail: CategoryDetail,
+	MovieDetail: MovieDetail
+}, StackNavigatorConfig)
+
+const LatestTab = createStackNavigator({
+	Latest: Latest,
+	MovieDetail: MovieDetail,
 }, StackNavigatorConfig)
 
 const TabNavigator = createBottomTabNavigator({
@@ -94,7 +105,7 @@ const TabNavigator = createBottomTabNavigator({
 		}) 
 	},
 	Latest: { 
-		screen: Stack,
+		screen: LatestTab,
 		navigationOptions: ({ navigation }) => ({
 			title: '最新',
 		}) 
@@ -122,7 +133,11 @@ const TabNavigator = createBottomTabNavigator({
 	})
 });
 
-const App = createAppContainer(TabNavigator )
+const App = createAppContainer(createStackNavigator({
+	Index: TabNavigator,
+	Login: Login2,
+	Register: Register
+}, StackNavigatorConfig) )
 
 // const App = createAppContainer(createStackNavigator({
 // 	Drawer: Drawer,
@@ -172,9 +187,33 @@ export default class extends PureComponent {
 	async componentDidMount() {
 		CodePush.allowRestart();//在加载完了，允许重启
 		const data = await Storage.get('themeColor');
+
 		if(data){
 			this.setState({themeColor:data.themeColor});
 		}
+
+		// 获取最新的用户信息
+		NetInfo.getConnectionInfo().then((connectionInfo) => {
+			if(connectionInfo.type === 'wifi' || connectionInfo.type === 'cellular ') {
+				Storage.get('token').then(token =>{
+					console.log('token', token)
+					if(!!token) {
+						global.token = token
+						GetSession().then(userdata => {
+							global.userInfo = userdata.user
+							Storage.save('userInfo', global.userInfo);
+						}).catch(err=>{
+							// console.log('err', err)
+							ToastAndroid && ToastAndroid.show('(；′⌒`)登陆凭证已失效', ToastAndroid.SHORT);
+							global.token = ''
+							Storage.delete('userInfo')
+							Storage.delete('token')
+						})
+					}
+				})
+			}
+		});
+
 		setTimeout(() => {
 			SplashScreen.hide();
 			// this.syncImmediate(); //开始检查更新

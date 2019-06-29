@@ -34,21 +34,8 @@ const contentOptions = {
 
 export default class DrawerContent extends PureComponent {
 
-    getLoginToken = async () => {
-        const data = await Storage.get('token');
-        console.log('开始测试', data)
-        if(!data) {
-            console.log('未登录，')
-            Storage.save('token','abc');
-        } else {
-            console.log('已登录', data)
-        }
-		
-    }
-    
     componentDidMount() {
         //console.warn(this.props)
-        this.getLoginToken()
     }
 
 	render() {

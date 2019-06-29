@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, FlatList, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import Scrollviewpager from '../components/Scrollviewpager';
@@ -78,6 +78,9 @@ const maps = [{
     ]
 }]
 
+const numColumns = 5;
+const { width, height } = Dimensions.get('window');
+
 export default class Category extends PureComponent {
 
     constructor(props) {
@@ -94,17 +97,16 @@ export default class Category extends PureComponent {
 
     GetAlbum = async () => {
         const data = await GetAlbumByLevel();
-        // console.log('data', this.mounted)
-        const transferData = data.map( v=> {
+        // const transferData = data.map( v=> {
             
-            const transferData = []
-            for(let i=0,len= v.content.length; i<len; i+=4 ){
-                transferData.push( v.content.slice(i,i+4));
-            }
-            v.content2 = transferData
+        //     const transferData = []
+        //     for(let i=0,len= v.content.length; i<len; i+=4 ){
+        //         transferData.push( v.content.slice(i,i+4));
+        //     }
+        //     v.content2 = transferData
 
-        })
-        console.log('data', data)
+        // })
+        // console.log('data', data)
         if(this.mounted){
             this.setState({
                 data,
@@ -137,7 +139,16 @@ export default class Category extends PureComponent {
                                     <Text style={[styles.text,{color: themeColor[0]}]}>{item.name}</Text>
                                 </TouchableOpacity>
                                 <Separator />
-                                {
+                                <FlatList
+                                    themeColor={themeColor.length>1?themeColor:[...themeColor,...themeColor]}
+                                    data={item.content}
+                                    numColumns={numColumns}
+                                    renderItem={this._renderItem}
+                                    style={{backgroundColor: '#fff'}}
+                                    scrollEnabled={false}
+                                    keyExtractor={(item, index) => index}
+                                />
+                                {/* {
                                     item.content2.map((sub, s)=>(
                                         <View style={styles.links} key={s}>
                                         {
@@ -150,12 +161,27 @@ export default class Category extends PureComponent {
                                         }
                                         </View>
                                     ))
-                                }
+                                } */}
                             </View>
                         ))
                     }
                 </View>
             </View>
+        )
+    }
+
+    _renderItem = ({item}) => {
+        // console.log('thisprops', this.props)
+        const {screenProps:{themeColor}} = this.props;
+        return (
+            <TouchableOpacity 
+                activeOpacity={0.7}
+                style={styles.item}
+                onPress={this.goDetail({type:item.listType,title:item.name,id:item.id})}
+            >
+               <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linkicon}><Icon name={item.icon} color={'#fff'} size={16} /></LinearGradient>
+                <Text style={styles.itemText}>{item.name}</Text>
+            </TouchableOpacity>
         )
     }
 };
@@ -209,5 +235,12 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         borderRadius:3,
         overflow:'hidden'
+    },
+    item: {
+        backgroundColor: '#fff',
+        width: width/numColumns,
+        height: 80,  
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

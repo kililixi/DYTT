@@ -29,7 +29,7 @@ import {
 // const $.LOCAL = 'http://27.124.2.112:90/vod'
 
   global.__IOS__ = Platform.OS==='ios';
-  
+  global.token = ''
   global.$ = {
     STATUS_HEIGHT: STATUS_HEIGHT,
     WIDTH: width,
@@ -39,5 +39,7 @@ import {
     VIDEO_URL: VIDEO_URL,
     LOCAL: LOCAL_URL
   }
+
+  // module.exports = global;
 
   
