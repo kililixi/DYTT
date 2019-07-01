@@ -41,7 +41,7 @@ export default class TabNavigator extends PureComponent {
         const {navigation,screenProps:{themeColor}} = this.props;
         return (
             <View style={styles.container}>
-                <AppTop title="邦邦App" navigation={navigation} themeColor={themeColor}>
+                <AppTop title="爱看视频" navigation={navigation} themeColor={themeColor}>
                     {
                         /*
                         <Touchable

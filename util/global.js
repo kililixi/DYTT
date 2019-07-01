@@ -21,12 +21,11 @@ import {
 
   const COVER_URL = 'http://192.168.45.129:8081/';
   const VIDEO_URL = 'http://192.168.45.129:8888';
+  const LOCAL_URL = 'http://192.168.199.131:8080'
 
   // const COVER_URL = 'http://27.124.2.112:90/images/';
   // const VIDEO_URL = 'http://27.124.2.112:8888';
-
-  const LOCAL_URL = 'http://192.168.199.131:8080'
-// const $.LOCAL = 'http://27.124.2.112:90/vod'
+  // const LOCAL_URL = 'http://27.124.2.112:90/vod'
 
   global.__IOS__ = Platform.OS==='ios';
   global.token = ''

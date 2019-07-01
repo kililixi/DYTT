@@ -28,6 +28,8 @@ import Latest from './src/page/Latest'
 import Login from './src/page/Login'
 import Login2 from './src/page/Login2'
 import Register from './src/page/Register'
+import Charge from './src/page/Charge'
+import ChargeHistory from './src/page/ChargeHistory'
 import UpdateModal from './src/components/UpdateModal';
 import { StoreProvider } from './util/store';
 import Storage from './util/storage';
@@ -117,7 +119,12 @@ const TabNavigator = createBottomTabNavigator({
 		}) 
 	},
 	PersonCenter: { 
-		screen: MineScene,
+		// screen: MineScene,
+		screen: createStackNavigator({
+			Index: MineScene,
+			Charge: Charge,
+			ChargeHistory: ChargeHistory
+		}, StackNavigatorConfig),
 		navigationOptions: ({ navigation }) => ({
 			title: '个人中心'
 		})  
@@ -200,13 +207,19 @@ export default class extends PureComponent {
 					if(!!token) {
 						global.token = token
 						GetSession().then(userdata => {
+							const vip = {}
+							vip.isVip = userdata.isVip
+							vip.vipValidTime = userdata.valid
+							global.vip = vip
 							global.userInfo = userdata.user
 							Storage.save('userInfo', global.userInfo);
+							Storage.save('vip', global.vip);
 						}).catch(err=>{
 							// console.log('err', err)
 							ToastAndroid && ToastAndroid.show('(；′⌒`)登陆凭证已失效', ToastAndroid.SHORT);
 							global.token = ''
 							Storage.delete('userInfo')
+							Storage.delete('vip')
 							Storage.delete('token')
 						})
 					}

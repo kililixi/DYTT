@@ -26,12 +26,20 @@ export default class LoginScreen extends Component {
       // 获取用户信息
       GetSession().then(userdata => {
         console.log('userdata', userdata)
+        const vip = {}
+        vip.isVip = userdata.isVip
+        vip.vipValidTime = userdata.valid
+        global.vip = vip
+
         global.userInfo = userdata.user
         Storage.save('token', global.token);
         Storage.save('userInfo', global.userInfo);
+        Storage.save('vip', global.vip);
         this.refs.buttonSubmit.closeLoading()
         ToastAndroid && ToastAndroid.show(`欢迎回来,${userdata.user.loginAccount}`, ToastAndroid.SHORT);
         this.props.navigation.replace('Index')
+      }).catch(()=>{
+        this.refs.buttonSubmit.closeLoading()
       })
     }).catch(()=>{
       this.refs.buttonSubmit.closeLoading()

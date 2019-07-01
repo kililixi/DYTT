@@ -404,4 +404,33 @@ const GetSession = () => {
     })    
 }
 
-export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetSearch2, GetCountryCode, GetAlbum, GetAlbumByLevel, GetLatest, Login, GetSession, Logout, Register}
+const GetCard = (cardno) => {
+    return request({
+        url: '/api/v1/card/' + cardno,
+        method: 'get'
+    })    
+}
+
+const Charge = (data) => {
+    console.log('data', data)
+    return request({
+        url: '/api/v1/charge',
+        method: 'post',
+        data
+    })    
+}
+
+const GetChargeHistory = (params) => {
+    params.sort = 'createTime'
+    params.order = 'desc'
+    params.page = params.pageIndex
+    params.size = params.pageSize
+    return request({
+        url: '/api/v1/charge',
+        method: 'get',
+        params: params
+    })    
+}
+
+
+export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetSearch2, GetCountryCode, GetAlbum, GetAlbumByLevel, GetLatest, Login, GetSession, Logout, Register, GetCard, Charge, GetChargeHistory}

@@ -13,21 +13,17 @@ import {
     ToastAndroid,
     View,
 } from 'react-native';
-import { BorderlessButton } from 'react-native-gesture-handler';
-import LinearGradient from 'react-native-linear-gradient';
-import Icon from 'react-native-vector-icons/Feather';
-import Loading from '../components/Loading';
-import LatestList from '../components/LatestList';
+
 import AnimatedView from '../components/AnimatedView';
 import AppTop from '../components/AppTop';
-import { GetLatest } from '../../util/api';
-
+import Loading from '../components/Loading';
+import LoadView from '../components/LoadView';
 const { UIManager } = NativeModules;
+import { GetChargeHistory } from '../../util/api';
 
-class SearchResult extends PureComponent {
+class History extends PureComponent {
 
     page = 1;
-
     pageSize = 5;
 
     state = {
@@ -48,23 +44,22 @@ class SearchResult extends PureComponent {
     }
 
     getData = async () => {
-        const data = await GetLatest({ pageIndex: this.page, pageSize: this.pageSize });
+        const data = await GetChargeHistory({ pageIndex: this.page, pageSize: this.pageSize });
         console.log('searchData', data);
         
         if( this.mounted ){
             LayoutAnimation.easeInEaseOut();
-            if (data.isEnd) {
+            if (data.last) {
                 console.log('search11111');
-                
                 this.setState({
-                    data: [...this.state.data, ...data.list],
+                    data: [...this.state.data, ...data.content],
                     isEnding: true,
                     isRender: true,
                 })
             } else {
                 console.log('search2222');
                 this.setState({
-                    data: [...this.state.data, ...data.list],
+                    data: [...this.state.data, ...data.content],
                     isRender: true,
                 })
                 this.page = this.page + 1;
@@ -78,14 +73,36 @@ class SearchResult extends PureComponent {
         }
     }
 
+    renderItem = ({ item, index }) => {
+		return <Text>{item.cardno}</Text>
+    }
+    
+    renderFooter = () => {
+        const { themeColor } = this.props
+        const { isEnding=false} = this.state
+		return <LoadView isEnding={isEnding} themeColor={themeColor} />;
+	}
+
     render() {
         const { themeColor,navigation } = this.props;
         const { isRender, data, isEnding } = this.state;
         return (
             <AnimatedView style={[styles.content, styles.bg, styles.full]}>
                 {
-                    isRender ?
-                        <LatestList isRender={true} isEnding={isEnding} data={data} navigation={navigation} themeColor={themeColor} onEndReached={this.loadMore} />
+                    isRender ? (
+                        <FlatList
+                            style={[styles.content]}
+                            numColumns={1}
+                            ItemSeparatorComponent={() => <View style={{height:10}} />}
+                            ListFooterComponent={this.renderFooter}
+                            data={data}
+                            // getItemLayout={(data, index) => ( {length: height, offset: height * index, index} )}
+                            onEndReached={this.loadMore}
+                            onEndReachedThreshold={0.1}
+                            keyExtractor={(item, index) => index+item.id.toString()}
+                            renderItem={this.renderItem}
+                        />
+                    )
                         :
                         <Loading size='small' text='正在查询中...' themeColor={themeColor} />
                 }
@@ -94,50 +111,34 @@ class SearchResult extends PureComponent {
     }
 }
 
-export default class Latest extends PureComponent {
+export default class ChargeHistory extends PureComponent {
+
     constructor(props) {
         super(props);
         this.state = {
-            isSearch: false,
-            isRender: false,
-            searchList: []
         };
         UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
     }
 
     componentDidMount() {
-        InteractionManager.runAfterInteractions(async () => {
-            const data_search = await GetLatest({pageIndex: this.page, pageSize: this.pageSize })
-            console.log('data_search', data_search)
-            this.setState({
-                isRender: true,
-                searchList: data_search
-            })
-        })
-    }
-
-    componentWillUnmount() {
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.searchList !== this.state.searchList) {
-            LayoutAnimation.easeInEaseOut();
-            // Storage.save('searchList', this.state.searchList);
-        }
+        // InteractionManager.runAfterInteractions(async () => {
+        //     const data_search = await GetChargeHistory({pageIndex: this.page, pageSize: this.pageSize })
+        //     console.log('data_search', data_search)
+        //     this.setState({
+        //         isRender: true,
+        //         chargeList: data_search
+        //     })
+        // })
     }
 
     render() {
         const { navigation, screenProps: { themeColor } } = this.props;
-        const { isSearch, searchList, isRender } = this.state;
         return (
             <View style={[styles.content, styles.bg]}>
-                <AppTop title="最新" navigation={navigation} showLeftIcon={false} themeColor={themeColor}>
+                <AppTop title="充值历史" navigation={navigation} showLeftIcon={false} themeColor={themeColor}>
                 </AppTop>
                 <View style={styles.content}>
-                    {
-                        // isSearch &&
-                        <SearchResult ref={node => this.searchcon = node} navigation={navigation} themeColor={themeColor[0]} />
-                    }
+                    <History themeColor={themeColor}></History>
                 </View>
             </View>
         )

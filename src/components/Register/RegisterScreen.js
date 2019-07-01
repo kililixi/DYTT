@@ -33,6 +33,7 @@ export default class RegisterScreen extends Component {
       name: "",
       password: "",
       password_confirmation: "",
+      refer: "",
       isLoading: false
     };
   }
@@ -47,7 +48,7 @@ export default class RegisterScreen extends Component {
   async onRegisterPress() {
     if (this.state.isLoading) return;
    
-    const { email, password, name, password_confirmation } = this.state;
+    const { email, password, name, password_confirmation, refer } = this.state;
     if(name === '') {
       ToastAndroid && ToastAndroid.show('(oﾟ▽ﾟ)o  用户名不能为空', ToastAndroid.LONG);
       return
@@ -73,7 +74,8 @@ export default class RegisterScreen extends Component {
     Register({
       loginAccount: name,
       loginPass: password,
-      userEmail: email
+      userEmail: email,
+      refer: refer
     }).then(data=>{
       // 登陆
       Login({
@@ -84,10 +86,15 @@ export default class RegisterScreen extends Component {
         // 获取用户信息
         GetSession().then(userdata => {
           this.setState({isLoading: false});
-          console.log('userdata', userdata)
           global.userInfo = userdata.user
+          const vip = {}
+          vip.isVip = userdata.isVip
+          vip.vipValidTime = userdata.valid
+          global.vip = vip
+
           Storage.save('token', global.token);
           Storage.save('userInfo', global.userInfo);
+          Storage.save('vip', global.vip);
           
           ToastAndroid && ToastAndroid.show(`欢迎,${userdata.user.loginAccount}`, ToastAndroid.SHORT);
           this.props.navigation.replace('Index')
@@ -123,36 +130,46 @@ export default class RegisterScreen extends Component {
               style={styles.input}
               placeholderTextColor="#c5c4c2"
               returnKeyType="next"
-              ref={input => (this.emailInput = input)}
               onSubmitEditing={() => this.passwordCInput.focus()}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
               placeholder="请输入邮箱"
             />
-          <TextInput
-            value={this.state.password}
-            onChangeText={password => this.setState({ password })}
-            style={styles.input}
-            placeholder="请输入密码"
-            secureTextEntry={true}
-            placeholderTextColor="#c5c4c2"
-            ref={input => (this.passwordCInput = input)}
-            onSubmitEditing={() => this.passwordInput.focus()}
-            returnKeyType="next"
-            secureTextEntry
-          />
-          <TextInput
-            value={this.state.password_confirmation}
-            onChangeText={password_confirmation => this.setState({ password_confirmation })}
-            style={styles.input}
-            placeholder="请再输入一次密码"
-            secureTextEntry={true}
-            placeholderTextColor="#c5c4c2"
-            returnKeyType="go"
-            secureTextEntry
-            ref={input => (this.passwordInput = input)}
-          />
+            <TextInput
+              value={this.state.password}
+              onChangeText={password => this.setState({ password })}
+              style={styles.input}
+              placeholder="请输入密码"
+              secureTextEntry={true}
+              placeholderTextColor="#c5c4c2"
+              ref={input => (this.passwordCInput = input)}
+              onSubmitEditing={() => this.passwordInput.focus()}
+              returnKeyType="next"
+              secureTextEntry
+            />
+            <TextInput
+              value={this.state.password_confirmation}
+              onChangeText={password_confirmation => this.setState({ password_confirmation })}
+              style={styles.input}
+              placeholder="请再输入一次密码"
+              secureTextEntry={true}
+              placeholderTextColor="#c5c4c2"
+              returnKeyType="go"
+              secureTextEntry
+              ref={input => (this.passwordInput = input)}
+            />
+            <TextInput
+              value={this.state.refer}
+              onChangeText={refer => this.setState({ refer })}
+              style={styles.input}
+              placeholderTextColor="#c5c4c2"
+              returnKeyType="next"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholder="推荐码，如果没有可不填"
+            />
           </KeyboardAvoidingView>
           <TouchableOpacity
             onPress={this.onRegisterPress.bind(this)}

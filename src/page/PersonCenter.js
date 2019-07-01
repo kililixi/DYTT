@@ -63,15 +63,21 @@ class MineScene extends PureComponent {
     super(props)
     this.state = {
       isRefreshing: false,
-      userInfo: null
+      userInfo: null,
+      vip: null
     }
     this.logout = this.logout.bind(this);
   }
 
   async componentDidMount() {
     const data = await Storage.get('userInfo');
+    const vip = await Storage.get('vip');
     console.log('userdata', data)
-    this.setState({ userInfo: data })
+    console.log('vip', vip)
+    this.setState({ 
+      userInfo: data,
+      vip: vip
+    })
 	}
 
   onHeaderRefresh() {
@@ -120,7 +126,7 @@ class MineScene extends PureComponent {
   }
 
   renderHeader() {
-    const { userInfo} = this.state
+    const { userInfo, vip} = this.state
     const {navigation} = this.props;
     return (
       <View style={[styles.header, {backgroundColor: this.props.screenProps.themeColor[0]}]}>
@@ -131,9 +137,14 @@ class MineScene extends PureComponent {
               <View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                   <Heading2 style={{ color: 'white' }}>{userInfo.loginAccount}</Heading2>
-                  <Image style={{ marginLeft: 4 }} source={require('../img/mine/beauty_technician_v15.png')} />
+                  { vip.isVip ? (
+                    <Image style={{ marginLeft: 4 }} source={require('../img/mine/beauty_technician_v15.png')} />
+                  ):null}
                 </View>
                 {/* <Paragraph style={{ color: 'white', marginTop: 4 }}>个人信息 ></Paragraph> */}
+              </View>
+              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+
               </View>
             </View>
           ):(
@@ -194,18 +205,20 @@ class MineScene extends PureComponent {
   getDataList() {
     // console.log('userInfouserInfouserInfouserInfo', this.state)
     const userInfo = this.state.userInfo
+    const vip = this.state.vip
+    const isVip = !!vip ? vip.isVip : false
     return (
       [
         [
-          { title: '我的钱包', subtitle: '充值好礼', image: require('../img/mine/icon_mine_wallet.png'), isRender: !!userInfo },
-          { title: '余额', subtitle: '￥95872385', image: require('../img/mine/icon_mine_balance.png'), isRender: !!userInfo }
+          { title: '我的会员', subtitle: isVip ? vip.vipValidTime.substr(0, 10) + ' 到期' : '现在加入', page: 'Charge', image: require('../img/mine/icon_mine_wallet.png'), isRender: !!userInfo },
+          { title: '充值历史', image: require('../img/mine/icon_mine_wallet.png'), page: 'ChargeHistory', isRender: !!userInfo },
         ],
         [
           { title: '我的收藏', image: require('../img/mine/icon_mine_collection.png'), page: 'Follow', isRender: true },
-          { title: '会员中心', subtitle: '黄金会员', image: require('../img/mine/icon_mine_membercenter.png'), isRender: !!userInfo }
+          // { title: '会员中心', subtitle: '黄金会员', image: require('../img/mine/icon_mine_membercenter.png'), isRender: !!userInfo }
         ],
         [
-          { title: '设置', image: require('../img/mine/icon_mine_setting.png'), page: 'Setting', isRender: false },
+          { title: '设置', image: require('../img/mine/icon_mine_setting.png'), page: 'Setting', isRender: true },
           { title: '客服中心', image: require('../img/mine/icon_mine_customerService.png'), isRender: true },
           { title: '政策与条款', image: require('../img/mine/icon_mine_aboutmeituan.png'), isRender: true }
         ]
