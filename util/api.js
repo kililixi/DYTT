@@ -93,6 +93,7 @@ const GetHomeData2 = async () => {
                 "Name": video.name,
                 "MovieTitle":  video.videoInfo.name,
                 "Score": video.rate,
+                "VipLevel": video.vipLevel
             }
         })
     })
@@ -183,7 +184,8 @@ const GetVideoInfo2 = async (ID)=> {
         "ReleaseDate": video.updateTime,
         "Score": video.rate,
         //"UpdateTime": "2018-09-25T10:58:25",
-        "RelateList": []
+        "RelateList": [],
+        "VipLevel": video.vipLevel
     }
     return data;
 }
@@ -201,7 +203,8 @@ const GetPlayUrl = async (url)=> {
     console.log('playurl', url + 'index.m3u8');
     
     return url + 'index.m3u8';
-    // return 'https://sohu.zuida-163sina.com/20181024/dj6jsHSy/index.m3u8';
+    // return 'http://192.168.45.129:8888/video/20190612/b1e6aff2-f3ac-477d-9ece-667e3129cf48/m3u8/index.m3u84'
+    // return 'http://192.168.45.129:90/video';
 }
 
 const GetDoubanInterests = ({DBID,start=0,count=5})=>fetchData(`https://frodo.douban.com/api/v2/movie/${DBID}/interests?start=${start}&count=${count}&status=done&order_by=latest&apikey=0b2bdeda43b5688921839c8ecb20399b`,{headers:{"User-Agent":"api-client/1 com.douban.movie"}});
@@ -258,7 +261,8 @@ const GetPageList2 = async ({size=10, page=1, id='', Status='', Area='', Plot=''
             "ID": video.id,
             "Name": video.name,
             "MovieTitle": video.name,
-            "Cover":  $.COVER_URL + video.videoInfo.coverPath
+            "Cover":  $.COVER_URL + video.videoInfo.coverPath,
+            "VipLevel": video.vipLevel
         })
     })
     console.log('result', result);
@@ -306,6 +310,7 @@ const GetSearch2 = async ({pageSize=10,pageIndex=1, SearchKey}) => {
             "ID": video.id,
             "Name": video.name,
             "Cover": $.COVER_URL + video.videoInfo.coverPath,
+            "VipLevel": video.vipLevel,
             "Info":{
                 "Type":video.videoalbumName,
                 "Art": '',
@@ -332,6 +337,7 @@ const GetLatest = async ({pageSize=10,pageIndex=1, SearchKey}) => {
             "Name": video.name,
             "Cover": $.COVER_URL + video.videoInfo.coverPath,
             "UpdateTime": video.updateTime,
+            "VipLevel": video.vipLevel,
             "Info":{
                 "Type":video.videoalbumName,
                 "Art": '',

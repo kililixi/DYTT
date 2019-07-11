@@ -63,6 +63,9 @@ const MovieInfo = ({movieInfo,themeColor,isPlaying,onPlay,isRender}) => (
             <TouchableOpacity disabled={!isRender} onPress={onPlay} activeOpacity={.8} style={[styles.playbtn, { backgroundColor: themeColor }]}>
                 <IconE name='controller-play' style={{marginLeft:3}} size={24} color='#fff' />
             </TouchableOpacity>
+            {
+			    movieInfo.VipLevel !== '0' && <Text numberOfLines={1} style={styles.vip}>会员</Text>
+		    }
         </View>
         <View style={[styles.postertext,isPlaying&&{height:($.WIDTH-40)*9/16}]}>
             <Text style={[styles.title, { color: themeColor }]}>{movieInfo.Name||'正在加载...'}</Text>
@@ -970,5 +973,18 @@ const styles = StyleSheet.create({
     },
     maskButtonText:{
         color:'#fff'
-    }
+    },
+    vip: {
+		// borderRradius: 0 4 0 4,
+		backgroundColor: '#FB7299',
+		borderColor: '#FB7299',
+		color: '#FFFFFF',
+		width: 40,
+		height: 20,
+		lineHeight: 20,
+		textAlign: 'center',
+		position: 'absolute',
+		right: 0,
+		top: 0
+	}
 })

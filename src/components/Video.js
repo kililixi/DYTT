@@ -86,7 +86,8 @@ export default class extends PureComponent {
             isFull:false,
             isError:false,
             isShowBar:false,
-            isEnd:false
+            isEnd:false,
+            errMsg: ''
         };
         UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
     }
@@ -183,7 +184,7 @@ export default class extends PureComponent {
     }
 
     onLoad = (data) => {
-        //console.warn('onLoad')
+        console.log('onLoad')
         this.setState({
             isReady: true,
             duration: data.duration,
@@ -204,19 +205,29 @@ export default class extends PureComponent {
     }
 
     onBuffer = (event) => {
+        console.log('onbuffer', event)
         this.setState({
             isBuffering:event.isBuffering
         })
     }
 
     onError = (event) => {
+        console.log('onerror', event)
+        let errMsg = "";
+        if(event.error[""].indexOf('401') > 0) {
+            errMsg = "抱歉，该视频为会员专享";
+        } else {
+            errMsg = "╮(╯﹏╰）╭ 抱歉，视频播放失败"
+        }
         this.setState({
             isError:true,
-            isBuffering:false
+            isBuffering:false,
+            errMsg: errMsg
         })
     }
 
     onProgress = (data) => {
+        console.log('on progress')
         if(!this.isSeeking){
             LayoutAnimation.easeInEaseOut();
             this.setState({ 
@@ -383,7 +394,7 @@ export default class extends PureComponent {
                 <View pointerEvents={(isShowBar||paused)?"auto":"none"} style={[styles.playbtnWrap,(!isShowBar&&!paused||!isReady)&&{left:-50},isShowBar&&{bottom:isFull?80:60}]} ><TouchableOpacity style={styles.playbtn} activeOpacity={.8} onPress={this.toTogglePlay}><IconF name={paused?'play':'pause'} size={20} color={themeColor} /></TouchableOpacity></View>
                 <View {...this._panResponder.panHandlers} style={[styles.fullScreen,{zIndex:5}]}>
                     <ActivityIndicator pointerEvents="none" color={themeColor} size={isFull?'large':'small'} style={!isBuffering&&{opacity:0,zIndex:-1}} />
-                    <Text pointerEvents="none" style={[styles.tips,!isError&&{opacity:0}]}>╮(╯﹏╰）╭ 抱歉，视频播放失败</Text>
+                    <Text pointerEvents="none" style={[styles.tips,!isError&&{opacity:0}]}>{this.state.errMsg}</Text>
                     <Text pointerEvents="none" style={[styles.tips,(!(isEnd&&!currentTime))&&{opacity:0}]}>播放完成</Text>
                     <Text pointerEvents="none" style={[styles.showTime,isFull&&styles.showTimeFull,!$isMove&&{opacity:0}]}>
                         <Text style={{color:themeColor}}>{timeFormat($currentTime)}</Text>
@@ -433,10 +444,11 @@ const styles = StyleSheet.create({
         right: 0,
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: 0
     },
     videobar:{
         position: 'absolute',
-        zIndex:10,
+        zIndex: 9999999,
         left: 0,
         bottom: 0,
         right: 0,

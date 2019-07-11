@@ -30,6 +30,9 @@ const MovieItem = (props) => (
 			style={styles.movieimg}
 			source={{uri:props.item.Cover||'http'}}
 		/>
+		{
+			props.item.VipLevel !== '0' && <Text numberOfLines={1} style={styles.vip}>会员专享</Text>
+		}
 		<View style={styles.movietext}>
 			<Text style={[styles.moviename,{color:props.themeColor}]}>{props.item.Name}</Text>
 			<Text numberOfLines={1} style={styles.movietxt1}>类型：{props.item.Info.Type}</Text>
@@ -141,5 +144,18 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 14,
         color: '#666'
-    }
+	},
+	vip: {
+		// borderRradius: 0 4 0 4,
+		backgroundColor: '#FB7299',
+		borderColor: '#FB7299',
+		color: '#FFFFFF',
+		width: 60,
+		height: 24,
+		lineHeight: 24,
+		textAlign: 'center',
+		position: 'absolute',
+		right: 0,
+		top: 0
+	}
 });

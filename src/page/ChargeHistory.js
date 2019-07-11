@@ -18,6 +18,7 @@ import AnimatedView from '../components/AnimatedView';
 import AppTop from '../components/AppTop';
 import Loading from '../components/Loading';
 import LoadView from '../components/LoadView';
+import ChargeDetail from '../components/ChargeCell'
 const { UIManager } = NativeModules;
 import { GetChargeHistory } from '../../util/api';
 
@@ -74,7 +75,9 @@ class History extends PureComponent {
     }
 
     renderItem = ({ item, index }) => {
-		return <Text>{item.cardno}</Text>
+        // return <Text>{item.cardno}</Text>
+        console.log('data', item)
+        return <ChargeDetail remark={item.remark} themeColor={ this.props.themeColor} chargeValidTime={item.chargeValidTime} createTime={item.createTime} key={item.id} />
     }
     
     renderFooter = () => {
@@ -86,6 +89,7 @@ class History extends PureComponent {
     render() {
         const { themeColor,navigation } = this.props;
         const { isRender, data, isEnding } = this.state;
+        console.log('dataaaaaaa', data)
         return (
             <AnimatedView style={[styles.content, styles.bg, styles.full]}>
                 {

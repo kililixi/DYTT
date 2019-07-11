@@ -30,6 +30,9 @@ const MovieItem = (props) => (
 			style={styles.movieimg}
 			source={{uri:props.item.Cover||'http'}}
 		/>
+		{
+			props.item.VipLevel !== '0' && <Text numberOfLines={1} style={styles.vip}>会员专享</Text>
+		}
 		<View style={styles.movietext}>
 			<Text numberOfLines={1} style={styles.moviename}>{props.item.Name}</Text>
 		</View>
@@ -44,6 +47,7 @@ export default class extends PureComponent {
 	}
 
 	renderItem = ({ item, index }) => {
+		console.log('item', item)
 		return <MovieItem item={item} navigation={this.props.navigation} />
 	}
 	componentDidUpdate(nextProps, nextState) {
@@ -131,5 +135,18 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 14,
         color: '#666'
-    }
+	},
+	vip: {
+		// borderRradius: 0 4 0 4,
+		backgroundColor: '#FB7299',
+		borderColor: '#FB7299',
+		color: '#FFFFFF',
+		width: 60,
+		height: 24,
+		lineHeight: 24,
+		textAlign: 'center',
+		position: 'absolute',
+		right: 0,
+		top: 0
+	}
 });

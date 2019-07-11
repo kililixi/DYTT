@@ -1,6 +1,6 @@
 
 import React, { PureComponent } from 'react'
-import { View, Text, StyleSheet, StatusBar, Image, TouchableOpacity, ScrollView, RefreshControl, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, StatusBar, Image, TouchableOpacity, ScrollView, RefreshControl, Dimensions, Alert } from 'react-native'
 
 import { Heading2, Heading3, Paragraph } from '../components/Text'
 import { screen, system } from '../common'
@@ -90,13 +90,24 @@ class MineScene extends PureComponent {
 
   logout() {
     const self = this
-    Logout().then(()=>{
-      global.token = ''
-      global.userInfo = null
-      Storage.delete('userInfo');
-      Storage.delete('token');
-      self.setState({ userInfo: null })
-    })
+    Alert.alert(
+      '退出确认',
+      '是否退出?',
+      [
+        {text: '取消', onPress: () => {}},
+        {text: '确定', onPress: () => {
+          Logout().then(()=>{
+            global.token = ''
+            global.userInfo = null
+            Storage.delete('userInfo');
+            Storage.delete('token');
+            self.setState({ userInfo: null })
+          })
+        }},
+      ],
+      { cancelable: true }
+    )
+    
   }
 
   renderCells(navigation) {
@@ -169,8 +180,9 @@ class MineScene extends PureComponent {
   }
 
   render() {
-    const {themeColor} = this.props.screenProps
-    const { userInfo} = this.state
+    const { screenProps:{ themeColor}, navigation} = this.props
+    const { userInfo, vip} = this.state
+    const isVip = !!vip ? vip.isVip : false
     return (
       <View style={{ flex: 1, backgroundColor: color.paper }}>
         <View style={{ position: 'absolute', width: screen.width, height: screen.height / 4, backgroundColor: themeColor[0] }} />
@@ -183,7 +195,33 @@ class MineScene extends PureComponent {
             />
           }>
           {this.renderHeader()}
-          <SpacingView />
+          {
+            !!userInfo && <View style={{ flex: 1, height: 80, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', backgroundColor: color.paper}}>
+            <View style={{marginLeft: 10, marginRight: 10, padding: 10, flex: 3, flexDirection: 'row', borderRadius: 5, backgroundColor: themeColor}}>
+              <View style={{ flex: 2, marginLeft: 10, alignItems: 'center', justifyContent: 'center'}}>
+                
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Image style={styles.vipImg} source={require('../img/mine/icon_mine_membercenter.png')} /><Text style={{fontSize: 18, color: '#fff'}}>{isVip?'您已是VIP会员': '开通VIP'}</Text>
+                </View>
+                
+                <View>
+                  <Text style={{fontSize: 14, color: '#fff'}}>{isVip ? vip.vipValidTime.substr(0, 10) + ' 到期' : '暂时没有VIP服务'}</Text>
+                </View>
+                
+              </View>
+              <View style={{ flex: 1,flexDirection: 'row', justifyContent: 'center'}}>
+                <TouchableOpacity
+                  onPress={ () => navigation.navigate('Charge')}
+                  style={[styles.button_charge ]}
+                  activeOpacity={1}>
+                  <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}> {isVip ? '续费VIP' : '充值VIP'} </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          
+          </View>
+          }
+          
           {this.renderCells(this.props.navigation)}
           {
             !!userInfo?(
@@ -210,7 +248,8 @@ class MineScene extends PureComponent {
     return (
       [
         [
-          { title: '我的会员', subtitle: isVip ? vip.vipValidTime.substr(0, 10) + ' 到期' : '现在加入', page: 'Charge', image: require('../img/mine/icon_mine_wallet.png'), isRender: !!userInfo },
+          { title: '推广分享', subtitle: '免费领VIP', page: 'Adver', image: require('../img/mine/icon_mine_membercard.png'), isRender: !!userInfo },
+          { title: '我的会员', subtitle: isVip ? vip.vipValidTime.substr(0, 10) + ' 到期' : '现在加入', page: 'Charge', image: require('../img/mine/icon_mine_membercenter.png'), isRender: !!userInfo },
           { title: '充值历史', image: require('../img/mine/icon_mine_wallet.png'), page: 'ChargeHistory', isRender: !!userInfo },
         ],
         [
@@ -279,11 +318,28 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     zIndex: 100,
   },
+  button_charge: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+    width: DEVICE_WIDTH/4,
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderWidth:1,
+    borderColor: 'white'
+  },
   text_register: {}
   ,
   text_login: {
     color: 'white'
-  }
+  },
+  vipImg: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+    borderRadius: 15,
+  },
 })
 
 

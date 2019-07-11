@@ -29,6 +29,7 @@ import Login from './src/page/Login'
 import Login2 from './src/page/Login2'
 import Register from './src/page/Register'
 import Charge from './src/page/Charge'
+import Adver from './src/page/Adver'
 import ChargeHistory from './src/page/ChargeHistory'
 import UpdateModal from './src/components/UpdateModal';
 import { StoreProvider } from './util/store';
@@ -88,6 +89,12 @@ const Stack = createStackNavigator({
 	Comment: Comment,
 }, StackNavigatorConfig)
 
+Stack.navigationOptions = ({ navigation }) => {
+    return {
+        tabBarVisible: navigation.state.index === 0,
+    };
+};
+
 const CategoryTab = createStackNavigator({
 	Category: Category,
 	CategoryDetail: CategoryDetail,
@@ -123,7 +130,8 @@ const TabNavigator = createBottomTabNavigator({
 		screen: createStackNavigator({
 			Index: MineScene,
 			Charge: Charge,
-			ChargeHistory: ChargeHistory
+			ChargeHistory: ChargeHistory,
+			Adver: Adver
 		}, StackNavigatorConfig),
 		navigationOptions: ({ navigation }) => ({
 			title: '个人中心'
