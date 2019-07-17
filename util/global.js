@@ -20,7 +20,7 @@ import {
   const STATUS_HEIGHT = Platform.OS==='ios'?20:(Platform.Version>19?StatusBar.currentHeight:0);
 
   const COVER_URL = 'http://192.168.45.129:8081/';
-  const VIDEO_URL = 'http://192.168.45.129:8888';
+  const VIDEO_URL = 'http://192.168.45.129';
   const LOCAL_URL = 'http://192.168.199.131:8080'
 
   // const COVER_URL = 'http://27.124.2.112:90/images/';

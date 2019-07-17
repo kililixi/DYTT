@@ -169,7 +169,7 @@ const GetVideoInfo2 = async (ID)=> {
 简介：${video.remark}`
     const data =  {
         "MoviePlayUrls":[{
-            "ID": 'play_0',
+            "ID": video.id,
             "Index": 0,
             "Name": video.sysFileUpload.originalName,
             "PlayUrl": $.VIDEO_URL + video.sysFileUpload.path
@@ -199,10 +199,25 @@ const GetPlayUrl2 = async (url)=> {
     return playUrl;
 }
 
-const GetPlayUrl = async (url)=> {
-    console.log('playurl', url + 'index.m3u8');
+const GetPlayUrl = async (url, ID)=> {
+    // const response = await fetch($.LOCAL + '/api/v1/appVideo/credit/' + ID, {
+    //     headers: new Headers({
+    //         'X-Token': global.token
+    //     })
+    // });
+    // // console.log('response', response);
+    // let credit = await response.text()
+
+    let credit = await request({
+        url: $.LOCAL + '/api/v1/appVideo/credit/' + ID,
+        method: 'get'
+    })
+
+    console.log('credit', credit);
+
+    console.log('playurl', url + 'index.m3u8?key='+credit+'&token='+global.token);
     
-    return url + 'index.m3u8';
+    return url + 'index.m3u8?key='+credit+'&token='+global.token;
     // return 'http://192.168.45.129:8888/video/20190612/b1e6aff2-f3ac-477d-9ece-667e3129cf48/m3u8/index.m3u84'
     // return 'http://192.168.45.129:90/video';
 }

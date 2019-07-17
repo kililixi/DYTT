@@ -420,7 +420,7 @@ export default class MovieDetail extends PureComponent {
             }
             const item = data.MoviePlayUrls.find(el=>el.ID==_sourceId||el.Name==historyItem.sourceName)||{};
             if(item.ID){
-                this.PlayUrl = await GetPlayUrl(item.PlayUrl);
+                this.PlayUrl = await GetPlayUrl(item.PlayUrl, item.ID);
             }
             this.setState({
                 movieInfo:data,
@@ -476,7 +476,7 @@ export default class MovieDetail extends PureComponent {
             this.lastPlayTime = null;
             const {movieInfo} = this.state;
             const item = movieInfo.MoviePlayUrls.find(el=>el.ID==ID);
-            this.PlayUrl = await GetPlayUrl(item.PlayUrl);
+            this.PlayUrl = await GetPlayUrl(item.PlayUrl, item.ID);
             this.setState({
                 sourceId:item.ID,
                 sourceName:item.Name,
@@ -498,7 +498,7 @@ export default class MovieDetail extends PureComponent {
         if(index>=0&&index<source.length-1){
             ToastAndroid && ToastAndroid.show('(oﾟ▽ﾟ)o  即将播放下一资源', ToastAndroid.SHORT);
             const item = source[index+1];
-            this.PlayUrl = await GetPlayUrl(item.PlayUrl);
+            this.PlayUrl = await GetPlayUrl(item.PlayUrl, item.ID);
             this.setState({
                 sourceId:item.ID,
                 sourceName:item.Name,
