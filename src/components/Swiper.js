@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
         //flexDirection:'row',
     },
     itemimg:{
-        width:180,
-        height:180*180/447,
+        width:230,
+        height:230*230/477,
         borderRadius:3,
     },
     iteminfo:{

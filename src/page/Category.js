@@ -6,7 +6,7 @@ import Scrollviewpager from '../components/Scrollviewpager';
 import AppTop from '../components/AppTop';
 import Separator from '../components/Separator'
 import Icon from 'react-native-vector-icons/Feather';
-import {GetAlbumByLevel} from '../../util/api'
+import {GetAlbumByLevel, GetAlbum} from '../../util/api'
 
 const maps = [{
     code: 'gold',
@@ -87,7 +87,9 @@ export default class Category extends PureComponent {
         super(props);
         this.state = {
             loading:true,
-            data:[]
+            data:[{
+                children: []
+            }]
         }
 	}
 
@@ -96,7 +98,8 @@ export default class Category extends PureComponent {
     }
 
     GetAlbum = async () => {
-        const data = await GetAlbumByLevel();
+        // const data = await GetAlbumByLevel();
+        const data = await GetAlbum()
         // const transferData = data.map( v=> {
             
         //     const transferData = []
@@ -106,7 +109,7 @@ export default class Category extends PureComponent {
         //     v.content2 = transferData
 
         // })
-        // console.log('data', data)
+        console.log('data', data)
         if(this.mounted){
             this.setState({
                 data,
@@ -133,7 +136,7 @@ export default class Category extends PureComponent {
 
                 <View>
                     {
-                        this.state.data.map((item, m)=>(
+                         this.state.data && this.state.data[0].children.map((item, m)=>(
                             <View key={m}>
                                 <TouchableOpacity style={[styles.huiyuanBtn]} activeOpacity={.8}>
                                     <Text style={[styles.text,{color: themeColor[0]}]}>{item.name}</Text>
@@ -141,7 +144,7 @@ export default class Category extends PureComponent {
                                 <Separator />
                                 <FlatList
                                     themeColor={themeColor.length>1?themeColor:[...themeColor,...themeColor]}
-                                    data={item.content}
+                                    data={item.children}
                                     numColumns={numColumns}
                                     renderItem={this._renderItem}
                                     style={{backgroundColor: '#fff'}}
@@ -179,8 +182,11 @@ export default class Category extends PureComponent {
                 style={styles.item}
                 onPress={this.goDetail({type:item.listType,title:item.name,id:item.id})}
             >
-               <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linkicon}><Icon name={item.icon} color={'#fff'} size={16} /></LinearGradient>
-                <Text style={styles.itemText}>{item.name}</Text>
+                <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linkicon}>
+                    {/* <Icon name={item.icon} color={'#fff'} size={16} /> */}
+                    <Text style={[styles.itemTextCenter, item.vipLevel === "1" ? styles.itemText : null]} size={16} >{item.name.substring(0, 1)}</Text>
+                </LinearGradient>
+                <Text style={ item.vipLevel === "1" ? styles.itemText : null}>{item.name}</Text>
             </TouchableOpacity>
         )
     }
@@ -243,4 +249,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    itemText: {
+        color:'#CFB53B'
+    },
+    itemTextCenter: {
+        textAlignVertical: 'top',
+        color: '#fff',
+        fontSize: 18
+    }
 });

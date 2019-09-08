@@ -249,7 +249,7 @@ class MineScene extends PureComponent {
       [
         [
           { title: '推广分享', subtitle: '免费领VIP', page: 'Adver', image: require('../img/mine/icon_mine_membercard.png'), isRender: !!userInfo },
-          { title: '我的会员', subtitle: isVip ? vip.vipValidTime.substr(0, 10) + ' 到期' : '现在加入', page: 'Charge', image: require('../img/mine/icon_mine_membercenter.png'), isRender: !!userInfo },
+          { title: '我的会员', subtitle: isVip ? vip.vipValidTime.substr(0, 10) + ' 到期' : '现在加入', image: require('../img/mine/icon_mine_membercenter.png'), isRender: !!userInfo },
           { title: '充值历史', image: require('../img/mine/icon_mine_wallet.png'), page: 'ChargeHistory', isRender: !!userInfo },
         ],
         [

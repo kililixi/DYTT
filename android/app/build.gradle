@@ -114,7 +114,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2
-        versionName "2.2.0"
+        versionName "2.2.2"
         // ndk {
         //     abiFilters "armeabi-v7a", "x86"
         // }
@@ -147,7 +147,7 @@ android {
         releaseStaging {
             minifyEnabled enableProguardInReleaseBuilds
             matchingFallbacks = ['release', 'debug']
-            buildConfigField "String", "CODEPUSH_KEY", '"Ec3vaG7cpA6emP7A6s8VynhGFkdx67842615-88ee-487c-ab21-9908f18597db"'
+            buildConfigField "String", "CODEPUSH_KEY", '"KP7gS9Ft63al60whfehZRBnwbPF_8ba36226-79f0-4d4f-8326-ab889bff3257"'
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
@@ -155,7 +155,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             matchingFallbacks = ['release', 'debug']
-            buildConfigField "String", "CODEPUSH_KEY", '"iP5vE4FFzkilVLeIfVDZ5LwjUvdg67842615-88ee-487c-ab21-9908f18597db"'
+            buildConfigField "String", "CODEPUSH_KEY", '"D-DNt7ixPSBEGYuMdfvkPp6koRJj8ba36226-79f0-4d4f-8326-ab889bff3257"'
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }

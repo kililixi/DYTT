@@ -28,7 +28,7 @@ export default class extends PureComponent {
     getData = async () => {
         // const data = await GetPageList({ pageIndex: 1, pageSize: 30, Type:this.type });
         const data = await GetPageList2({ page: 1, size: 10, Type:this.type, id: this.id });
-        
+        console.log('Screen', this.mounted)
         if(this.mounted){
             LayoutAnimation.easeInEaseOut();
             this.setState({

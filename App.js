@@ -36,7 +36,7 @@ import { StoreProvider } from './util/store';
 import Storage from './util/storage';
 import {GetSession} from './util/api'
 import CodePush from "react-native-code-push";
-const CODE_PUSH_PRODUCTION_KEY = 'iP5vE4FFzkilVLeIfVDZ5LwjUvdg67842615-88ee-487c-ab21-9908f18597db';
+// const CODE_PUSH_PRODUCTION_KEY = 'iP5vE4FFzkilVLeIfVDZ5LwjUvdg67842615-88ee-487c-ab21-9908f18597db';
 import Icon from 'react-native-vector-icons/FontAwesome';
 // import IconFoundation from 'react-native-vector-icons/Foundation';
 
@@ -193,7 +193,10 @@ export default class extends PureComponent {
 
 	//如果有更新的提示
     syncImmediate = async () => {
+		// TODO 
+		ToastAndroid && ToastAndroid.show('检查更新', ToastAndroid.LONG);
 		const RemotePackage = await CodePush.checkForUpdate();
+		ToastAndroid && ToastAndroid.show('结果为: ' + RemotePackage, ToastAndroid.LONG);
 		if(RemotePackage){
 			this.modal.init(RemotePackage);
 		}
@@ -237,7 +240,7 @@ export default class extends PureComponent {
 
 		setTimeout(() => {
 			SplashScreen.hide();
-			// this.syncImmediate(); //开始检查更新
+			this.syncImmediate(); //开始检查更新
 		}, 500);
 	}
 

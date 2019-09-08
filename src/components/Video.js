@@ -106,9 +106,10 @@ export default class extends PureComponent {
         //this.video.presentFullscreenPlayer()
     }
 
-    toPlay = (bool) => {
+    toPlay = (bool, playRightNow) => {
         const { isReady,currentTime } = this.state;
-        if( isReady ){
+        console.log('isReady', isReady, bool, playRightNow)
+        if( isReady || playRightNow){
             this.toShowBar();
             this.setState({ 
                 paused: !bool,
@@ -190,6 +191,7 @@ export default class extends PureComponent {
             duration: data.duration,
             //paused:false
         });
+        this.toPlay(true, true)
         if(this.props.seekTime>0){
             this.video.seek(this.props.seekTime);
         }

@@ -69,6 +69,7 @@ export default class extends PureComponent {
 
 	render() {
 		const { data, isRender,themeColor,style,onEndReached=()=>{} } = this.props;
+		console.log('MovileLIst', data, isRender)
 		const height = ($.WIDTH - 40) / 2+40;
 		if (!isRender) {
 			return <Loading style={{height:100}} size='small' text='' themeColor={themeColor} />

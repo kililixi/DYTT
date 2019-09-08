@@ -128,7 +128,7 @@ const GetVideoInfo = async (ID)=> {
 `主演：${getTags(0)}
 导演：${getTags(5)}
 简介：${$('#detail-intro').text()}`
-    console.log('tex', $('#detail-intro').text());
+    // console.log('tex', $('#detail-intro').text());
     
     const data =  {
         "MoviePlayUrls":MoviePlayUrls,
@@ -149,11 +149,8 @@ const GetVideoInfo = async (ID)=> {
 }
 
 const GetVideoInfo2 = async (ID)=> {
-    console.log('getGetVideoInfo2');
-    
     const response = await fetch($.LOCAL + '/api/v1/appVideo/' + ID);
     let video = await response.json()
-    console.log('videoINfo', video);
     // videoInfo.
     const starring = video.videoInfo.videoStarring.map( v=> {
         return v.starring
@@ -195,7 +192,6 @@ const GetPlayUrl2 = async (url)=> {
     const html = await fetch(u).then(d=>d.text());
     const $ = cheerio.load(html);
     const playUrl = $('iframe').attr('src').split('=')[1];
-    console.log(playUrl)
     return playUrl;
 }
 
@@ -213,10 +209,6 @@ const GetPlayUrl = async (url, ID)=> {
         method: 'get'
     })
 
-    console.log('credit', credit);
-
-    console.log('playurl', url + 'index.m3u8?key='+credit+'&token='+global.token);
-    
     return url + 'index.m3u8?key='+credit+'&token='+global.token;
     // return 'http://192.168.45.129:8888/video/20190612/b1e6aff2-f3ac-477d-9ece-667e3129cf48/m3u8/index.m3u84'
     // return 'http://192.168.45.129:90/video';
@@ -248,7 +240,6 @@ const GetPageList = async ({pageSize=25,pageIndex=1,Type='',Status='',Area='',Pl
     //https://m.kankanwu.com/${Type}/index_${pageIndex}_${Plot}__${Year}__${orderBy}_${Area}_1.html
     //const html = await fetch(WEBM+`/${Type}/index_${pageIndex}_${Plot}_${Status}_${Year}__${orderBy}_${Area}_1.html`).then(d=>d.text());
     const html = await fetch(WEB+`/index.php?s=Showlist-show-id-${mapType[Type]}-mcid-${Plot}-lz-${Status}-area-${Area}-year-${Year}-letter--order-${orderBy}-picm-1-p-${pageIndex}.html`).then(d=>d.text());
-    console.log('`/index.php?s=Showlist-show-id-${mapType[Type]}-mcid-${Plot}-lz-${Status}-area-${Area}-year-${Year}-letter--order-${orderBy}-picm-1-p-${pageIndex}.html`', `/index.php?s=Showlist-show-id-${mapType[Type]}-mcid-${Plot}-lz-${Status}-area-${Area}-year-${Year}-letter--order-${orderBy}-picm-1-p-${pageIndex}.html`);
     
     const $ = cheerio.load(html);
     const data =  $('#contents li').map((i, el)=>{
@@ -267,11 +258,8 @@ const GetPageList = async ({pageSize=25,pageIndex=1,Type='',Status='',Area='',Pl
 const GetPageList2 = async ({size=10, page=1, id='', Status='', Area='', Plot='', Year='', orderBy='hits'}) => {
     const response = await fetch($.LOCAL + `/api/v1/appVideo/?videoalbumId=${id}&countryCode=${Area}&publishTime=${Year}&page=${page}&size=${size}`);
     let data = await response.json();
-    console.log('data', data);
     
     const result = data.content.map( video =>{
-        console.log('i', video);
-        
         return ({
             "ID": video.id,
             "Name": video.name,
@@ -280,7 +268,6 @@ const GetPageList2 = async ({size=10, page=1, id='', Status='', Area='', Plot=''
             "VipLevel": video.vipLevel
         })
     })
-    console.log('result', result);
     return result;
     // return ({
     //     "ID": video.attr('href'),
@@ -375,7 +362,12 @@ const GetAlbum = async (id) => {
     id = id || ''
     const response = await fetch($.LOCAL + `/api/v1/appAlbum?id=${id}`);
     let data = await response.json();
-    console.log('categories', data);
+    return data;
+}
+
+const GetIndexAlbum = async () => {
+    const response = await fetch($.LOCAL + `/api/v1/appVideo/indexAlbum`);
+    let data = await response.json();
     return data;
 }
 
@@ -433,7 +425,6 @@ const GetCard = (cardno) => {
 }
 
 const Charge = (data) => {
-    console.log('data', data)
     return request({
         url: '/api/v1/charge',
         method: 'post',
@@ -454,4 +445,4 @@ const GetChargeHistory = (params) => {
 }
 
 
-export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetSearch2, GetCountryCode, GetAlbum, GetAlbumByLevel, GetLatest, Login, GetSession, Logout, Register, GetCard, Charge, GetChargeHistory}
+export {fetchData,GetHomeData, GetHomeData2, GetVideoInfo, GetVideoInfo2, GetPageList, GetPageList2, GetDoubanInterests,GetPlayUrl, GetSearch, GetSearch2, GetCountryCode, GetAlbum, GetAlbumByLevel, GetLatest, Login, GetSession, Logout, Register, GetCard, Charge, GetChargeHistory, GetIndexAlbum}
