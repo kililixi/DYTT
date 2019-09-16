@@ -103,20 +103,6 @@ export default class TabNavigator extends PureComponent {
         const type = 'movie' // 
         return (
             <View style={styles.container}>
-                <ScrollView
-                    style={{flex: 1}}
-                    showsVerticalScrollIndicator={false}
-                    refreshControl={
-                        <RefreshControl
-                        title={'下拉刷新'}
-                        refreshing={this.state.refreshing}
-                        colors={['rgb(255, 176, 0)',"#ffb100"]}
-                        onRefresh={() => {
-                            this._onRefresh();
-                        }}
-                        />
-                    }
-                >
                 <AppTop title="爱看视频" navigation={navigation} themeColor={themeColor}>
                     {
                         /*
@@ -132,6 +118,20 @@ export default class TabNavigator extends PureComponent {
                         <Icon name='search' size={20} color='#fff' />
                     </BorderlessButton>
                 </AppTop>
+                <ScrollView
+                    style={{flex: 1}}
+                    showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl
+                        title={'下拉刷新'}
+                        refreshing={this.state.refreshing}
+                        colors={['rgb(255, 176, 0)',"#ffb100"]}
+                        onRefresh={() => {
+                            this._onRefresh();
+                        }}
+                        />
+                    }
+                >
                    <Home ref={(view)=>this.home=view} tablabel="首页" {...this.props} _onHomeRefreshEnd={this._onHomeRefreshEnd.bind(this)}  _setTab={this._setTab.bind(this)}/>
                     {/* {
                         tabs.map(el => <Screen id={el.id} key={el.id} type={type} tablabel={el.name} {...this.props} />)

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, FlatList, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, FlatList, Dimensions, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import Scrollviewpager from '../components/Scrollviewpager';
@@ -134,11 +134,11 @@ export default class Category extends PureComponent {
                 <AppTop title="分类" navigation={navigation} showLeftIcon={false} themeColor={themeColor}>
                 </AppTop>
 
-                <View>
+                <ScrollView>
                     {
                          this.state.data && this.state.data[0].children.map((item, m)=>(
                             <View key={m}>
-                                <TouchableOpacity style={[styles.huiyuanBtn]} activeOpacity={.8}>
+                                <TouchableOpacity style={[styles.huiyuanBtn]} activeOpacity={.8} onPress={this.goDetail({type:item.listType,title:item.name,id:item.id})}>
                                     <Text style={[styles.text,{color: themeColor[0]}]}>{item.name}</Text>
                                 </TouchableOpacity>
                                 <Separator />
@@ -168,7 +168,7 @@ export default class Category extends PureComponent {
                             </View>
                         ))
                     }
-                </View>
+                </ScrollView>
             </View>
         )
     }

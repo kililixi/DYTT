@@ -8,7 +8,7 @@ import color from '../components/Color'
 import DetailCell from '../components/DetailCell'
 import SpacingView from '../components/SpacingView'
 import NavigationItem from '../components/NavigationItem'
-import {Logout} from '../../util/api'
+import {Logout, GetSession} from '../../util/api'
 
 import Storage from '../../util/storage';
 const DEVICE_WIDTH = Dimensions.get('window').width;
@@ -81,8 +81,30 @@ class MineScene extends PureComponent {
 	}
 
   onHeaderRefresh() {
-    this.setState({ isRefreshing: true })
-
+    if(  global.token === '') {
+      // this.setState({ isRefreshing: false })
+      return
+    } else {
+      this.setState({ isRefreshing: true })
+      GetSession().then(userdata => {
+        const vip = {}
+        vip.isVip = userdata.isVip
+        vip.vipValidTime = userdata.valid
+        global.vip = vip
+        global.userInfo = userdata.user
+        Storage.save('userInfo', global.userInfo);
+        Storage.save('vip', global.vip);
+        this.setState({ isRefreshing: false })
+      }).catch(err=>{
+        // console.log('err', err)
+        this.setState({ isRefreshing: false })
+        ToastAndroid && ToastAndroid.show('(；′⌒`)登陆凭证已失效', ToastAndroid.SHORT);
+        global.token = ''
+        Storage.delete('userInfo')
+        Storage.delete('vip')
+        Storage.delete('token')
+      })
+    }
     setTimeout(() => {
       this.setState({ isRefreshing: false })
     }, 2000)

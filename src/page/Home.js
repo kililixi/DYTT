@@ -1,5 +1,5 @@
 import React, { PureComponent,Fragment } from 'react';
-import { StyleSheet, ScrollView, Text, View, TouchableOpacity,LayoutAnimation,NativeModules } from 'react-native';
+import { StyleSheet, ScrollView, Text, View, TouchableOpacity,LayoutAnimation,NativeModules, FlatList, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import Swiper from '../components/Swiper';
@@ -9,6 +9,7 @@ import MovieMoreBtn from '../components/MovieMoreBtn'
 import {GetHomeData, GetHomeData2} from '../../util/api';
 
 const {UIManager} = NativeModules;
+const { width, height } = Dimensions.get('window');
 
 const mapto = (list,maps) => {
     const data = {};
@@ -27,6 +28,7 @@ const mapto = (list,maps) => {
     return data;
 }
 
+const numColumns = 4;
 export default class Home extends PureComponent {
 
     constructor(props) {
@@ -82,6 +84,16 @@ export default class Home extends PureComponent {
         this.props.navigation.navigate('MovieContent',params);
     }
 
+    _renderItem = ({item}) => {
+        const {screenProps:{themeColor}} = this.props;
+        return (
+            <TouchableOpacity style={styles.linkitem} activeOpacity={.9} onPress={this.goDetail({type:item.listType,title:item.name,id:item.id})} >
+                <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linkicon}><Icon name={'film'} color={'#fff'} size={16} /></LinearGradient>
+                <Text style={styles.linktext}>{item.name}</Text>
+            </TouchableOpacity>
+        )
+    }
+
     render() {
         const {loading,data={}, headers=[]} = this.state;
         const {navigation,screenProps:{themeColor}} = this.props;
@@ -91,12 +103,19 @@ export default class Home extends PureComponent {
             <Swiper loading={loading} data={data.scrolling&&data.scrolling.list} navigation={navigation} themeColor={themeColor[0]} />
             <View style={styles.links}>
                 {
-                     headers.map((d,i)=>(
-                        <TouchableOpacity key={i} style={styles.linkitem} activeOpacity={.9} onPress={this.goDetail({type:d.listType,title:d.name,id:d.id})} >
-                            <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linkicon}><Icon name={'film'} color={'#fff'} size={16} /></LinearGradient>
-                            <Text style={styles.linktext}>{d.name}</Text>
-                        </TouchableOpacity>
-                    ))
+                    <FlatList
+                        data={headers}
+                        numColumns={numColumns}
+                        renderItem={this._renderItem}
+                        scrollEnabled={false}
+                        keyExtractor={(item, index) => index}
+                    />
+                    //  headers.map((d,i)=>(
+                    //     <TouchableOpacity key={i} style={styles.linkitem} activeOpacity={.9} onPress={this.goDetail({type:d.listType,title:d.name,id:d.id})} >
+                    //         <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linkicon}><Icon name={'film'} color={'#fff'} size={16} /></LinearGradient>
+                    //         <Text style={styles.linktext}>{d.name}</Text>
+                    //     </TouchableOpacity>
+                    // ))
                     // maps.filter(el=>!el.isRender).map((d,i)=>(
                     //     <TouchableOpacity key={i} style={styles.linkitem} activeOpacity={.9} onPress={this.goDetail({type:d.listType,title:d.name,id:d.id})} >
                     //         <LinearGradient colors={themeColor.length>1?themeColor:[...themeColor,...themeColor]} start={{x: 0, y: 0}} end={{x: 1, y: 0}} style={styles.linkicon}><Icon name={d.icon} color={'#fff'} size={16} /></LinearGradient>
@@ -137,11 +156,13 @@ const styles = StyleSheet.create({
         marginHorizontal:10,
         padding:10,
         marginTop:-25,
-        flexDirection:'row'
+        flexDirection:'row',
+        justifyContent: 'space-between'
     },
     linkitem:{
-        flex:1,
-        alignItems:'center'
+        width: (width-20)/numColumns,
+        alignItems:'center',
+        justifyContent: 'center'
     },
     linkicon:{
         width:40,
